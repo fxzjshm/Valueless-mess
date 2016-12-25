@@ -1,0 +1,13 @@
+Private Sub Form_Load()
+Dim i As Integer
+Randomize
+i = Int(Rnd * 46) + 1
+While True
+If i = 9 Then
+i = Int(Rnd * 46) + 1
+Else
+GoTo 1
+End If
+Wend
+1 Label1.Caption = i
+End Sub

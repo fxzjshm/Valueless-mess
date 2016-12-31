@@ -33,7 +33,10 @@
 			<Add option="-fexceptions" />
 		</Compiler>
 		<Unit filename="main.cpp" />
-		<Unit filename="noi-openjudge.cpp" />
+		<Unit filename="noi-openjudge/ch0101.cpp" />
+		<Unit filename="noi-openjudge/ch0102.cpp" />
+		<Unit filename="noi-openjudge/ch0103.cpp" />
+		<Unit filename="noi-openjudge/ch0104.cpp" />
 		<Unit filename="version.h" />
 		<Extensions>
 			<AutoVersioning>

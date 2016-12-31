@@ -1,4 +1,19 @@
 # depslib dependency file v1.0
-1482640191 source:/home/pi/workspace/Valuable-mess/Cpp-Learning/Cpp-Learning/main.cpp
+1483191785 source:/home/pi/workspace/Valuable-mess/Cpp-Learning/Cpp-Learning/main.cpp
 	<iostream>
+
+1483188578 source:/home/pi/workspace/Valuable-mess/Cpp-Learning/Cpp-Learning/noi-openjudge.cpp
+	<bits/stdc++.h>
+
+1483189259 source:/home/pi/workspace/Valuable-mess/Cpp-Learning/Cpp-Learning/noi-openjudge/ch0101.cpp
+	<bits/stdc++.h>
+
+1483189346 source:/home/pi/workspace/Valuable-mess/Cpp-Learning/Cpp-Learning/noi-openjudge/ch0102.cpp
+	<bits/stdc++.h>
+
+1483189445 source:/home/pi/workspace/Valuable-mess/Cpp-Learning/Cpp-Learning/noi-openjudge/ch0103.cpp
+	<bits/stdc++.h>
+
+1483191714 source:/home/pi/workspace/Valuable-mess/Cpp-Learning/Cpp-Learning/noi-openjudge/ch0104.cpp
+	<bits/stdc++.h>
 

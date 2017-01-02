@@ -27,7 +27,7 @@ int getBit(long long n,int m){
     return a-b*10;
 }
 int main(){
-    unsigned int l,l2;
+    unsigned int l,l2,n;
     cin>>l;
     if(l==2){
         cout<<"1"<<endl;
@@ -40,34 +40,20 @@ int main(){
     }
     vector <long long> nums;
     l2=(l-1)/2;
-
-    long long num,num2,base=pow(10,l2);
-    int temp;
-    for(int i=(base/10);i<base;i++){
-        num=i*10;
-        temp=i;
-        while(temp){
-            num*=10;
-            num+=temp%10;
-            // num+=getBit(temp,getBits(temp));
-            temp/=10;
+    for(int i=pow(10,l2);i<pow(10,l2+1)-1;i++){
+        long long num=i*pow(10,getBits(i)-1);
+        for(int j=1;j<getBits(i);j++){
+            num+=pow(10,j-1)*getBit(i,j);
         }
-        /*
-        num=i*base*10;
-        temp=i;
-        int len=getBits(i);
-        for(int k=1;k<=len;k++){
-            num+=pow(10,k)*getBit(i,k);
-        }*/
-        for(int j=0;j<=9;j++){
-            num2=num+j*base;
-            if(isNotFactable(num2))
-                nums.push_back(num2);
+        if(getBits(num)!=3&&getBits(num)!=1&&getBits(num)!=7){
+            num+=1;
+        }
+        if(isNotFactable(num)){
+            nums.push_back(num);
         }
     }
-
     cout<<nums.size()<<endl;
-    for(unsigned int i=0;i<nums.size();i++){
+    for(int i=0;i<nums.size();i++){
         cout<<nums[i];
         if(i!=nums.size()-1)cout<<" ";
     }

@@ -33,6 +33,10 @@
 			<Add option="-fexceptions" />
 		</Compiler>
 		<Unit filename="main.cpp" />
+		<Unit filename="noi-openjudge/buggy/ch011311.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
 		<Unit filename="noi-openjudge/ch0101.cpp" />
 		<Unit filename="noi-openjudge/ch0102.cpp" />
 		<Unit filename="noi-openjudge/ch0103.cpp" />

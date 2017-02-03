@@ -1,7 +1,37 @@
 #include<bits/stdc++.h>
-
 using namespace std;
-bool isNotFactable(long n){
+
+#include <bits/stdc++.h>
+using namespace std;
+bool ch011310isNotFactable(long long n){
+    if(n<=0)return false;
+    if(n==1)return false;
+    if(n==2)return true;
+    if(n%2==0)
+            return false;
+    double maxNum=sqrt(n);
+    for(unsigned long i=3;i<=maxNum;i+=2){
+        if(n%i==0)
+            return false;
+    }
+    return true;
+}
+int ch011310(){
+    long long a,b,n=0;
+    cin>>a>>b;
+    if(a>b){
+        long long temp;
+        temp=a;
+        a=b;
+        b=temp;
+    }
+    for(long long i=a;i<=b;i++)
+        if(ch011310isNotFactable(i))n++;
+    cout<<n;
+    return 0;
+}
+
+bool ch011311isNotFactable(long n){
     if(n%2==0) // 2
             return false;
     double maxNum=sqrt(n);
@@ -43,7 +73,7 @@ int ch011311(){
         }
         for(int j=0;j<=9;j++){
             num2=num+j*base;
-            if(isNotFactable(num2)){
+            if(ch011311isNotFactable(num2)){
                 nums[numSize]=num2;
                 numSize++;
             }

@@ -44,6 +44,8 @@
 		<Unit filename="noi-openjudge/ch0102.cpp" />
 		<Unit filename="noi-openjudge/ch0103.cpp" />
 		<Unit filename="noi-openjudge/ch0104.cpp" />
+		<Unit filename="noi-openjudge/ch0105.cpp" />
+		<Unit filename="noi-openjudge/ch0106.cpp" />
 		<Unit filename="noi-openjudge/ch0113.cpp" />
 		<Unit filename="version.h" />
 		<Extensions>

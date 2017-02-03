@@ -214,3 +214,56 @@ int ch010416(){
 
     return 0;
 }
+
+int ch010417(){
+    int y;
+    cin>>y;
+    if(0==y%3200||(0==y%100&&y%400)||(y%4))cout<<"N";
+    else cout<<"Y";
+    return 0;
+}
+
+int ch010418(){
+    double x,y;
+    cin>>x>>y;
+    if(-1<=x&&x<=1&&-1<=y&&y<=1)cout<<"yes";
+    else cout<<"no";
+    return 0;
+}
+
+int ch010419(){
+    int a,b;
+    char o;
+    cin>>a>>b>>o;
+    if('+'==o)cout<<a+b;
+    else if('-'==o)cout<<a-b;
+    else if('*'==o)cout<<a*b;
+    else if('/'==o){
+        if(0==b)cout<<"Divided by zero!";
+        else cout<<a/b;
+    }else cout<<"Invalid operator!";
+    return 0;
+}
+
+int ch010420(){
+    double a,b,c,d,m;
+    cin>>a>>b>>c;
+    d=b*b-4*a*c;
+    m=-b/(2*a);
+    if(d>0){
+        double x1=(-b+sqrt(d))/(2*a),x2=(-b-sqrt(d))/(2*a);
+        if(!x1)x1=0;
+        if(!x2)x2=0;
+        printf("x1=%.5f;x2=%.5f",max(x1,x2),min(x1,x2));
+    }
+    if(0==d){
+        if(0==m)printf("x1=x2=0.00000");
+        else printf("x1=x2=%.5f",m);
+    }
+    if(d<0){
+        if(0==m)printf("x1=0.00000+%.5fi;x2=0.00000-%.5fi",abs(sqrt(-d)/(2*a)),abs(sqrt(-d)/(2*a)));
+        else printf("x1=%.5f+%.5fi;x2=%.5f-%.5fi",m,sqrt(-d)/(2*a),m,sqrt(-d)/(2*a));
+    }
+    return 0;
+}
+

@@ -1,8 +1,5 @@
 #include<bits/stdc++.h>
 using namespace std;
-
-#include <bits/stdc++.h>
-using namespace std;
 bool ch011310isNotFactable(long long n){
     if(n<=0)return false;
     if(n==1)return false;
@@ -81,7 +78,7 @@ int ch011311(){
     }
     cout<<numSize<<endl;
     for(unsigned int i=0;i<numSize;i++){
-        printf("%d ",nums[i]);
+        printf("%ld ",nums[i]);
         // if(i!=nums.size()-1)cout<<" ";
     }
     return 0;

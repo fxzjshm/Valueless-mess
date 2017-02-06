@@ -2,9 +2,9 @@
 	<!-- include the environment -->
 	<property environment="env"/>	
 	<!-- output directory for temporary object files -->
-	<property name="buildDir" value="target/linux32" />
+	<property name="buildDir" value="target/linuxarm" />
 	<!-- output directory for the shared library -->
-	<property name="libsDir" value="../libs/linux32" />
+	<property name="libsDir" value="../libs/linuxarm" />
 	<!-- the name of the shared library -->
 	<property name="libName" value="libgdx-freetype.so"/>
 	<!-- the jni header jniPlatform to use -->

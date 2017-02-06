@@ -36,17 +36,36 @@
 		</Compiler>
 		<Unit filename="main.cpp" />
 		<Unit filename="noi-openjudge/buggy/ch011311.cpp">
-			<Option compile="0" />
 			<Option link="0" />
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
-		<Unit filename="noi-openjudge/ch0101.cpp" />
-		<Unit filename="noi-openjudge/ch0102.cpp" />
-		<Unit filename="noi-openjudge/ch0103.cpp" />
-		<Unit filename="noi-openjudge/ch0104.cpp" />
-		<Unit filename="noi-openjudge/ch0105.cpp" />
-		<Unit filename="noi-openjudge/ch0106.cpp" />
-		<Unit filename="noi-openjudge/ch0113.cpp" />
+		<Unit filename="noi-openjudge/ch0101.cpp">
+			<Option link="0" />
+		</Unit>
+		<Unit filename="noi-openjudge/ch0102.cpp">
+			<Option link="0" />
+		</Unit>
+		<Unit filename="noi-openjudge/ch0103.cpp">
+			<Option link="0" />
+		</Unit>
+		<Unit filename="noi-openjudge/ch0104.cpp">
+			<Option link="0" />
+		</Unit>
+		<Unit filename="noi-openjudge/ch0105.cpp">
+			<Option link="0" />
+		</Unit>
+		<Unit filename="noi-openjudge/ch0106.cpp">
+			<Option link="0" />
+		</Unit>
+		<Unit filename="noi-openjudge/ch0107.cpp">
+			<Option link="0" />
+		</Unit>
+		<Unit filename="noi-openjudge/ch0108.cpp">
+			<Option link="0" />
+		</Unit>
+		<Unit filename="noi-openjudge/ch0113.cpp">
+			<Option link="0" />
+		</Unit>
 		<Unit filename="version.h" />
 		<Extensions>
 			<AutoVersioning>

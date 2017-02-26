@@ -42,6 +42,19 @@ int ch010707(){
 	return 0;
 }
 
+int ch010708(){
+	string s,a,b;
+	int n;
+	cin>>s>>a>>b;
+	n=s.find(a,0);
+	while(n!=string::npos){
+		s.replace(n,1,b);
+		n=s.find(a,n+1);
+	}
+	cout<<s;
+	return 0;
+}
+
 char ch010709g(char x){
 	if('a'<=x&&x<'z')return x+1;
 	if(x=='z')return 'a';
@@ -56,6 +69,18 @@ int ch010709(){
 	for(int i=0;i<s.size();i++)
 		a[i]=ch010709g(s[i]);
 	cout<<a;
+	return 0;
+}
+
+char ch010710t(char a){
+	if('A'<=a&&a<='E')return a+21;
+	if('F'<=a&&a<='Z')return a-5;
+	return a;
+}
+int ch010710(){
+	char s[205];
+	gets(s);
+	for(int i=0;i<strlen(s);i++)cout<<ch010710t(s[i]);
 	return 0;
 }
 
@@ -90,6 +115,58 @@ int ch010713(){
 	return 0;
 }
 
+char ch010714t(char a){
+	if('A'<=a&&a<='Z')return a-'A'+'a';
+	if('a'<=a&&a<='z')return a-'a'+'A';
+	return a;
+}
+int ch010714(){
+	char s[105];
+	gets(s);
+	for(int i=0;i<strlen(s);i++)cout<<ch010714t(s[i]);
+	return 0;
+}
+
+char ch010715U2l(char x){
+	if('A'<=x&&x<='Z')return x-'A'+'a';
+	return x;
+}
+char ch010715l2U(char x){
+	if('a'<=x&&x<='z')return x-'a'+'A';
+	return x;
+}
+int ch010715(){
+	int n;
+	string s;
+	cin>>n;
+	for(int i=0;i<n;i++){
+		cin>>s;
+		s[0]=ch010715l2U(s[0]);
+		for(int j=1;j<s.size();j++)s[j]=ch010715U2l(s[j]);
+		cout<<s<<endl;
+	}
+	return 0;
+}
+
+string ch010717p(string s){
+	for(int i=0;i<s.size();i++){
+		L1:if(s[i]==' '){
+			s.erase(i,1);
+			goto L1;
+		}
+		if('A'<=s[i]&&s[i]<='Z')s[i]-='A'-'a';
+	}
+	return s;
+}
+int ch010717(){
+	string a,b;
+	getline(cin,a);
+	getline(cin,b);
+	if(ch010717p(a)==ch010717p(b))cout<<"YES";
+	else cout<<"NO";
+	return 0;
+}
+
 int ch010720(){
 	string s;
 	cin>>s;
@@ -117,5 +194,74 @@ int ch010723(){
 		s.replace(p,2," ");
 	}
 	cout<<s;
+	return 0;
+}
+
+int ch010724(){
+	char s[1000];
+	int f=0;
+	while(cin>>s){
+		if(!f)f=1;
+		else{cout<<",";}
+		cout<<strlen(s);
+	}
+	return 0;
+}
+
+int ch010726(){
+	string t,s,s1,s2;
+	int n,l,r,t1,a;
+	cin>>t;
+	n=t.find(',',0);
+	while(n!=string::npos){
+		t.replace(n,1," ");
+		n=t.find(',',0);
+	}
+	stringstream ss;
+	ss<<t;
+	ss>>s>>s1>>s2;
+	if((l=s.find(s1,0))==string::npos){
+		cout<<-1;
+		return 0;
+	}
+	l+=s1.size()-1;
+	for(int i=s.size()-1;i>-1;i--){
+		t1=s.find(s2,i);
+		if(t1!=string::npos){
+			r=t1;
+			break;
+		}
+	}
+	a=r-l-1;
+	if(a<0)cout<<-1;
+	else cout<<a;
+	return 0;
+}
+
+int ch010729(){
+	string s;
+	cin>>s;
+	/*while(1){
+		int p=s.find("-",0);
+		if(p==string::npos)break;
+		s.erase(p,1);
+	}
+	cout<<s;*/
+	int t=0,m=0;
+	for(int i=0;i<s.size()-1;i++){
+		if('0'<=s[i]&&s[i]<='9'){
+			m++;
+			t+=m*(s[i]-'0');
+		}
+	}
+	t%=11;
+	if(t==s[s.size()-1]-'0'||(t==10&&s[s.size()-1]=='X'))cout<<"Right";
+	else{
+		for(int i=0;i<s.size()-1;i++){
+			cout<<s[i];
+		}
+		if(t==10)cout<<'X';
+		else cout<<t;
+	}
 	return 0;
 }

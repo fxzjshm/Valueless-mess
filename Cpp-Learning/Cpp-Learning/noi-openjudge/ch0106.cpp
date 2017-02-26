@@ -93,6 +93,30 @@ int ch010607(){
 	return 0;
 }
 
+int ch010608g(int a,int b){
+	if(a==b)return 0;
+	if((a==0&&b==2)||(a==2&&b==5)||(a==5&&b==0))return 1;
+	return -1;
+}
+int ch010608(){
+	int n,na,nb,a=0,b=0;
+	cin>>n>>na>>nb;
+	int as[na],bs[nb];
+	for(int i=0;i<na;i++)
+		cin>>as[i];
+	for(int i=0;i<nb;i++)
+		cin>>bs[i];
+	for(int i=0;i<n;i++){
+		int t=ch010608g(as[i%na],bs[i%nb]);
+		if(t<0)b++;
+		if(t>0)a++;
+	}
+	if(a>b)cout<<"A";
+	if(a<b)cout<<"B";
+	if(a==b)cout<<"draw";
+	return 0;
+}
+
 int ch010609(){
 	int n,a=0,t;
 	cin>>n;

@@ -15,6 +15,28 @@ int ch010701(){
 }
 #undef l
 
+int ch010702(){
+    string s;
+    cin>>s;
+    int cs[256];
+    for(int i=0;i<256;i++)cs[i]=-1;
+    for(int i=0;i<s.size();i++){
+        if(cs[s[i]]==-1)cs[s[i]]=i;
+        else cs[s[i]]=-2;
+    }
+    string a="no";
+    int id=s.size();
+    for(int i=0;i<256;i++){
+        if(cs[i]>=0&&cs[i]<id){
+            a=(char)i;
+            id=cs[i];
+        }
+    }
+    cout<<a;
+    return 0;
+}
+
+
 int ch010703(){
 	double n;
 	string s1,s2,temp;
@@ -29,6 +51,31 @@ int ch010703(){
 	cout<<(((1.0*m/s1.size())>=n)?"yes":"no");
 	return 0;
 }
+
+int ch010704(){
+    int n;
+    cin>>n;
+    string p1,p2;
+    for(int i=0;i<n;i++){
+        cin>>p1>>p2;
+        if(p1==p2)cout<<"Tie"<<endl;
+        else if((p1=="Rock"&&p2=="Scissors")||(p1=="Scissors"&&p2=="Paper")||(p1=="Paper"&&p2=="Rock"))cout<<"Player1"<<endl;
+        else cout<<"Player2"<<endl;
+    }
+    return 0;
+}
+
+int ch010705(){
+    char s[105],s1[105];
+    gets(s); // ' '
+    int l=strlen(s);
+    strcpy(s1,s);
+    for(int i=0;i<l-1;i++)s1[i]=s[i]+s[i+1];
+    s1[l-1]=s[l-1]+s[0];
+    cout<<s1;
+    return 0;
+}
+
 
 int ch010707(){
 	string s1;

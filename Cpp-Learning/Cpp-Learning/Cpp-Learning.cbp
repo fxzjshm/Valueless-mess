@@ -10,7 +10,7 @@
 				<Option output="bin/Debug/Cpp-Learning" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
-				<Option compiler="clang" />
+				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-Wall" />
 					<Add option="-g" />
@@ -32,6 +32,8 @@
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
+			<Add option="-std=c++98" />
+			<Add option="-ansi" />
 			<Add option="-fexceptions" />
 		</Compiler>
 		<Unit filename="main.cpp" />
@@ -63,6 +65,7 @@
 		<Unit filename="noi-openjudge/ch0108.cpp">
 			<Option link="0" />
 		</Unit>
+		<Unit filename="noi-openjudge/ch0109.cpp" />
 		<Unit filename="noi-openjudge/ch0113.cpp">
 			<Option link="0" />
 		</Unit>

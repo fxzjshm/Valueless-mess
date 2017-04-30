@@ -70,3 +70,20 @@ int ch010905(){
 	cout<<max1-min1;
 	return 0;
 }
+
+int ch010908(){
+    int n;
+    double t,a;
+    cin>>n;
+    double ns[n];
+    for(int i=0;i<n;i++){
+        cin>>a;
+        ns[i]=a;
+        t+=a;
+    }
+    sort(ns,ns+n);
+    t-=ns[0]+ns[n-1];
+    double avg=t/(n-2);
+    printf("%.2f %.2f",avg,max(abs(ns[n-2]-avg),abs(avg-ns[1])));
+    return 0;
+}

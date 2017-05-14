@@ -1,4 +1,5 @@
 #include<bits/stdc++.h>
+namespace p2038{
 using namespace std;
 
 struct road{
@@ -46,7 +47,7 @@ void spfa(int origin){
     }
     isinqueue[origin]=0;
 }
-int main(){
+int main2038(){
 	int from,to,dis;
 	cin>>N>>P>>C;
 	for(int i=1;i<=N;i++){
@@ -72,4 +73,5 @@ int main(){
 	}
 	cout<<mind;
 	return 0;
+}
 }

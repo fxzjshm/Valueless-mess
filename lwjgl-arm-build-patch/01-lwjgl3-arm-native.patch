@@ -1,0 +1,33 @@
+--- a/config/linux/build.xml	2016-12-27 23:27:52.000000000 +0800
++++ b/config/linux/build.xml	2017-02-25 21:12:45.026069150 +0800
+@@ -25,8 +25,8 @@
+ 			<mkdir dir="@{dest}"/>
+ 			<apply dir="@{dest}" executable="gcc" dest="@{dest}" skipemptyfilesets="true" failonerror="true" parallel="true" taskname="Compiler">
+ 				<arg line="-c -std=c11"/>
+-				<arg line="-m64" if:true="${build.arch.x64}"/>
+-				<arg line="-m32 -mfpmath=sse -msse -msse2" unless:true="${build.arch.x64}"/>
++				<!-- arg line="-m64" if:true="${build.arch.x64}"/ -->
++				<!-- arg line="-m32 -mfpmath=sse -msse -msse2" unless:true="${build.arch.x64}"/ -->
+ 				<arg line="-O3 -flto -fPIC @{flags} -pthread -D_XOPEN_SOURCE=700 -DLWJGL_LINUX -DLWJGL_${build.arch}"/>
+ 
+ 				<arg value="-I${jni.headers}"/>
+@@ -79,8 +79,8 @@
+ 			<apply executable="gcc" failonerror="true" parallel="true" taskname="Linker" unless:set="lib-uptodate">
+ 				<srcfile/>
+ 				<arg value="-shared"/>
+-				<arg value="-m64" if:true="${build.arch.x64}"/>
+-				<arg value="-m32" unless:true="${build.arch.x64}"/>
++				<!-- arg value="-m64" if:true="${build.arch.x64}"/ -->
++				<!-- arg value="-m32" unless:true="${build.arch.x64}"/ -->
+ 
+ 				<arg line="-z noexecstack"/>
+ 				<arg line="-O3 -flto -fPIC -pthread -o ${lib}/lib@{name}${LIB_POSTFIX}.so"/>
+@@ -202,7 +202,7 @@
+ 		<!-- SSE -->
+ 		<build name="lwjgl_sse" dest="${bin.native}/sse" if:true="${binding.sse}">
+ 			<source>
+-				<arg value="-msse3"/>
++				<!-- arg value="-msse3"/ -->
+ 				<arg value="-I${src.include.rel}/util"/>
+ 				<fileset dir="." includes="${src.generated.native}/util/simd/*.c"/>
+ 			</source>

@@ -41,7 +41,3 @@ int main1540(){
     return 0;
 }
 }
-int main(){
-    p1540::main1540();
-    return 0;
-}

@@ -36,15 +36,19 @@
 			<Add option="-ansi" />
 			<Add option="-fexceptions" />
 		</Compiler>
+		<Unit filename="codevs/1014.cpp" />
 		<Unit filename="codevs/1073.cpp" />
 		<Unit filename="codevs/1077.cpp" />
+		<Unit filename="codevs/1102.cpp" />
 		<Unit filename="codevs/1160.cpp" />
 		<Unit filename="codevs/1212.cpp" />
 		<Unit filename="codevs/1540.cpp" />
 		<Unit filename="codevs/1842.cpp" />
 		<Unit filename="codevs/1978.cpp" />
 		<Unit filename="codevs/2038.cpp" />
+		<Unit filename="codevs/2451.cpp" />
 		<Unit filename="codevs/3038.cpp" />
+		<Unit filename="codevs/3961.cpp" />
 		<Unit filename="codevs/5709.cpp" />
 		<Unit filename="main.cpp" />
 		<Unit filename="noi-openjudge/buggy/ch011311.cpp">

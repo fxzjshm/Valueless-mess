@@ -1,8 +1,7 @@
 #include <bits/stdc++.h>
 namespace p3038{
 using namespace std;
-
-int main3038(){
+int main(){
     int t,s=0,n;
     cin>>t;
     for(int i=0;i<t;i++){

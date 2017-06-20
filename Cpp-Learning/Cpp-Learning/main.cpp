@@ -3,13 +3,13 @@
 namespace p{
 using namespace std;
 
-int main#(){
+int main(){
 
     return 0;
 }
 }
 int main(){
-    p::main#();
+    p::main();
     return 0;
 }
 */

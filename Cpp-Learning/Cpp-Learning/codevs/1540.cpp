@@ -19,7 +19,7 @@ void u(int x,int y){
     ss[y].ncount+=ss[ss[x].father].ncount;
     ss[ss[x].father].father=y;
 }
-int main1540(){
+int main(){
     for(int i=1;i<30000;i++){
         ss[i].father=i;
         ss[i].nfront=0;

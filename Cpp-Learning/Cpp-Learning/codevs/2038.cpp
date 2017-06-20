@@ -47,7 +47,7 @@ void spfa(int origin){
     }
     isinqueue[origin]=0;
 }
-int main2038(){
+int main(){
 	int from,to,dis;
 	cin>>N>>P>>C;
 	for(int i=1;i<=N;i++){

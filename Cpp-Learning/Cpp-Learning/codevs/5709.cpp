@@ -2,7 +2,7 @@
 namespace p5709{
 using namespace std;
 int s,n,w[1005],k[1005],f[5005];
-int main5709(){
+int main(){
     cin>>s>>n;
     for(int i=1;i<=n;i++){
         cin>>w[i]>>k[i];

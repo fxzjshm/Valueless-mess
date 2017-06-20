@@ -50,7 +50,7 @@ void dfs(int last,int lastn,int depth){
         }
     }
 }
-int main2451(){
+int main(){
     cin>>N>>K;
     init();
     //dfs(0,0,1);
@@ -58,8 +58,4 @@ int main2451(){
     cout<<a;
     return 0;
 }
-}
-int main(){
-    p2451::main2451();
-    return 0;
 }

@@ -7,7 +7,7 @@ int get(int p){
     father[p]=get(father[p]);
     return father[p];
 }
-int main1073(){
+int main(){
     scanf("%d %d %d",&n,&m,&p);
     for(int i=1;i<=n;i++){
         father[i]=i;

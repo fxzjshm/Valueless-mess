@@ -2,7 +2,7 @@
 namespace p1160{
 using namespace std;
 int n,ns[100][100],dx[]={1,0,-1,0},dy[]={0,-1,0,1},nd[]={1,2,3,0},sum=0;
-int main1160(){
+int main(){
     cin>>n;
     memset(ns,0,sizeof(ns));
     int x=n/2,y=n/2,d=0;//R=0,U=1,L=2,D=3

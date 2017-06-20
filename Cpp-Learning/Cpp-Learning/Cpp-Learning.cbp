@@ -10,7 +10,7 @@
 				<Option output="bin/Debug/Cpp-Learning" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
-				<Option compiler="gcc" />
+				<Option compiler="clang" />
 				<Compiler>
 					<Add option="-Wall" />
 					<Add option="-g" />
@@ -36,20 +36,30 @@
 			<Add option="-ansi" />
 			<Add option="-fexceptions" />
 		</Compiler>
+		<Unit filename="codevs/1008.cpp" />
+		<Unit filename="codevs/1011.cpp" />
 		<Unit filename="codevs/1014.cpp" />
+		<Unit filename="codevs/1039.cpp" />
 		<Unit filename="codevs/1073.cpp" />
 		<Unit filename="codevs/1077.cpp" />
 		<Unit filename="codevs/1102.cpp" />
 		<Unit filename="codevs/1160.cpp" />
 		<Unit filename="codevs/1212.cpp" />
+		<Unit filename="codevs/1294.cpp" />
 		<Unit filename="codevs/1540.cpp" />
 		<Unit filename="codevs/1842.cpp" />
 		<Unit filename="codevs/1978.cpp" />
 		<Unit filename="codevs/2038.cpp" />
+		<Unit filename="codevs/2080.cpp" />
+		<Unit filename="codevs/2194.cpp" />
 		<Unit filename="codevs/2451.cpp" />
 		<Unit filename="codevs/3038.cpp" />
+		<Unit filename="codevs/3895.cpp" />
 		<Unit filename="codevs/3961.cpp" />
 		<Unit filename="codevs/5709.cpp" />
+		<Unit filename="luogu/1020.cpp" />
+		<Unit filename="luogu/1595.cpp" />
+		<Unit filename="luogu/1706.cpp" />
 		<Unit filename="main.cpp" />
 		<Unit filename="noi-openjudge/buggy/ch011311.cpp">
 			<Option link="0" />

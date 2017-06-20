@@ -2,7 +2,7 @@
 namespace p1102{
 using namespace std;
 int f[1001],T,M,w,v;
-int main1102(){
+int main(){
     cin>>T>>M;
     for(int i=0;i<M;i++){
         cin>>w>>v;

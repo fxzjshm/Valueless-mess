@@ -3,7 +3,7 @@
 namespace p3961{
 using namespace std;
 int f[100005],N,T,w;
-int main3961(){
+int main(){
     memset(f,0x7F,sizeof(f));
     f[0]=0;
     cin>>N>>T;

@@ -1,5 +1,6 @@
 #include<cstdio>
 using namespace std;
+namespace p218_5_5_242_9018__1261{
 int n,a[25];
 void print(int depth){
 	printf("%d=",n);
@@ -18,4 +19,5 @@ void dfs(int depth,int sum,int last){
 int main(){
 	scanf("%d",&n);
 	dfs(0,0,1);
+}
 }

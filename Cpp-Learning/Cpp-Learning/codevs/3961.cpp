@@ -1,23 +1,22 @@
-//---------BUGGY!---------------
-#include <bits/stdc++.h>
-namespace p3961{
+#include<iostream>
+#include<memory.h>
+#ifndef min
+#define min(a,b) ((a)<(b)?(a):(b))
+#endif
 using namespace std;
-int f[100005],N,T,w;
+namespace p3961{
+int dp[100005],n,m,t;
 int main(){
-    memset(f,0x7F,sizeof(f));
-    f[0]=0;
-    cin>>N>>T;
-    for(int i=0;i<N;i++){
-        cin>>w;
-        for(int j=T;j>=w;j--)
-            f[j]=min(f[j],f[j-w]+1);
-    }
-    for(int i=T;i>0;i--){
-        if(f[i]<0x7F7F7F7F){
-            cout<<f[i];
-            return 0;
-        }
-    }
-    return 0;
+	memset(dp,0x7f,sizeof(dp));
+	dp[0]=0;
+	cin>>n>>m;
+	for(int i=1;i<=n;i++){
+		cin>>t;
+		for(int j=t;j<=m;j++){
+			dp[j]=min(dp[j],dp[j-t]+1);
+		}
+	}
+	cout<<dp[m];
+	return 0;
 }
 }

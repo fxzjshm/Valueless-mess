@@ -38,6 +38,7 @@
 			<Add option="-fexceptions" />
 		</Compiler>
 		<Unit filename="218.5.5.242.9018.1261.cpp" />
+		<Unit filename="bzoj/1087.cpp" />
 		<Unit filename="codevs/1004.cpp" />
 		<Unit filename="codevs/1008.cpp" />
 		<Unit filename="codevs/1011.cpp" />
@@ -53,6 +54,7 @@
 		<Unit filename="codevs/1212.cpp" />
 		<Unit filename="codevs/1288.cpp" />
 		<Unit filename="codevs/1294.cpp" />
+		<Unit filename="codevs/1380.cpp" />
 		<Unit filename="codevs/1540.cpp" />
 		<Unit filename="codevs/1669.cpp" />
 		<Unit filename="codevs/1842.cpp" />
@@ -70,11 +72,15 @@
 		<Unit filename="hdu/1342.cpp" />
 		<Unit filename="hdu/2159.cpp" />
 		<Unit filename="hdu/2952.cpp" />
+		<Unit filename="luogu/1018.cpp" />
 		<Unit filename="luogu/1020.cpp" />
+		<Unit filename="luogu/1043.cpp" />
 		<Unit filename="luogu/1048.cpp" />
+		<Unit filename="luogu/1063.cpp" />
 		<Unit filename="luogu/1064.cpp" />
 		<Unit filename="luogu/1595.cpp" />
 		<Unit filename="luogu/1706.cpp" />
+		<Unit filename="luogu/1880.cpp" />
 		<Unit filename="main.cpp" />
 		<Unit filename="noi-openjudge/1751.cpp" />
 		<Unit filename="noi-openjudge/6261.cpp" />
@@ -93,9 +99,12 @@
 		<Unit filename="noi-openjudge/ch0109.cpp" />
 		<Unit filename="noi-openjudge/ch0113.cpp" />
 		<Unit filename="poj/3134.cpp" />
+		<Unit filename="poj/3254.cpp" />
 		<Unit filename="rqnoj/39.cpp" />
+		<Unit filename="rqnoj/49.cpp" />
 		<Unit filename="version.h" />
 		<Unit filename="vijos/1025.cpp" />
+		<Unit filename="vijos/1456.cpp" />
 		<Unit filename="vijos/2728.cpp" />
 		<Extensions>
 			<AutoVersioning>

@@ -1,8 +1,7 @@
 /*
 #include <bits/stdc++.h>
-namespace p{
 using namespace std;
-
+namespace p{
 int main(){
 
     return 0;

@@ -42,6 +42,40 @@ int ch010603(){
     return 0;
 }
 
+namespace ch010604{
+int main(){
+	int n;
+	cin>>n;
+	int ns[n];
+	for(int i=0;i<n;i++)cin>>ns[i];
+	for(int i=n;i>0;i--)cout<<ns[i-1]<<' ';
+	return 0;
+}
+}
+
+namespace ch010605{
+int n,t,n1,n2,n3,n4;
+int main(){
+    cin>>n;
+    for(int i=1;i<=n;i++){
+        cin>>t;
+        if(0<=t&&t<=18){
+            n1++;
+        }else if(19<=t&&t<=35){
+            n2++;
+        }else if(36<=t&&t<=60){
+            n3++;
+        }else{
+            n4++;
+        }
+    }
+    int s=n1+n2+n3+n4;
+    printf("%.2f%%\n%.2f%%\n%.2f%%\n%.2f%%",100.0*n1/s,100.0*n2/s,100.0*n3/s,100.0*n4/s);
+
+    return 0;
+}
+}
+
 int ch010606(){
 	int l,m,a;
 	int ns[100005];
@@ -93,6 +127,38 @@ int ch010607(){
 	return 0;
 }
 
+namespace pnoi010607{
+int ns[3005],n,d[3005];
+bool b=true;
+inline int abs(int a){
+	return (a<0)?(-a):a;
+}
+int main(){
+	cin>>n;
+	cin>>ns[0];
+	int dt;
+	for(int i=1;i<n;i++){
+		cin>>ns[i];
+		dt=abs(ns[i]-ns[i-1]);
+		if(dt==0||dt>n-1||d[dt]!=0){
+			b=false;
+			break;
+		}else{
+			d[dt]++;
+		}
+	}
+	for(int i=1;i<n;i++){
+		if(!d[i]){
+			b=false;
+			break;
+		}
+	}
+	if(b)cout<<"Jolly";
+	else cout<<"Not jolly";
+	return 0;
+}
+}
+
 int ch010608g(int a,int b){
 	if(a==b)return 0;
 	if((a==0&&b==2)||(a==2&&b==5)||(a==5&&b==0))return 1;
@@ -115,6 +181,36 @@ int ch010608(){
 	if(a<b)cout<<"B";
 	if(a==b)cout<<"draw";
 	return 0;
+}
+
+namespace pnoi010608{
+int a[101],b[101],n,na,nb,aa,ab;
+int main(){
+	cin>>n>>na>>nb;
+	for(int i=0;i<na;i++){
+		cin>>a[i];
+	}
+	for(int i=0;i<nb;i++){
+		cin>>b[i];
+	}
+	for(int i=0;i<n;i++){
+		int ai=a[i%na],bi=b[i%nb];
+		if(ai==bi)continue;
+		if((ai==0&&bi==2)||(ai==2&&bi==5)||(ai==5&&bi==0)){
+			aa++;
+		}else{
+			ab++;
+		}
+	}
+	if(aa>ab){
+		cout<<'A';
+	}else if(aa<ab){
+		cout<<'B';
+	}else{
+		cout<<"draw";
+	}
+	return 0;
+}
 }
 
 int ch010609(){

@@ -71,6 +71,51 @@ int ch010905(){
 	return 0;
 }
 
+namespace ch010906{
+string s;
+map<char,int> ns;
+int mi=0x7FFFFFFF,ma=0;
+inline void cp(int x){
+    if(x<2)goto FA;
+    for(int i=2;i*i<=x;i++){
+        if(x%i==0)goto FA;
+    }
+    cout<<"Lucky Word"<<endl<<x;
+    return;
+    FA:cout<<"No Answer"<<endl<<0;
+}
+int main(){
+    cin>>s;
+    for(int i=0;i<s.size();i++){
+        ns[s[i]]++;
+    }
+    for(char i='a';i<='z';i++){
+        if(ns.count(i)){
+            mi=min(mi,ns[i]);
+            ma=max(ma,ns[i]);
+        }
+    }
+    cp(ma-mi);
+    return 0;
+}
+}
+
+namespace ch010907{
+int n,t,s=0,m;
+map<int,int> ns;
+int main(){
+    cin>>n;
+    for(int i=1;i<=n;i++){
+        cin>>t;
+        ns[t]++;
+        s+=t;
+        m=max(m,t);
+    }
+    cout<<s-ns[m]*m;
+    return 0;
+}
+}
+
 int ch010908(){
     int n;
     double t,a;
@@ -86,4 +131,85 @@ int ch010908(){
     double avg=t/(n-2);
     printf("%.2f %.2f",avg,max(abs(ns[n-2]-avg),abs(avg-ns[1])));
     return 0;
+}
+
+namespace ch010909{
+map<int,int> ns;
+int ma=0,n,t;
+int main(){
+    cin>>n;
+    for(int i=0;i<n;i++){
+        cin>>t;
+        ma=max(ma,t);
+        ns[t]++;
+    }
+    for(int i=0;i<=ma;i++){
+        cout<<ns[i]<<endl;
+    }
+    return 0;
+}
+}
+
+namespace ch010912{
+int n,ml=-1,last,t,l=1;
+int main(){
+    cin>>n;
+    cin>>last;
+    for(int i=1;i<n;i++){
+        cin>>t;
+        if(t==last){
+            l++;
+        }else{
+            ml=max(l,ml);
+            last=t;
+            l=1;
+        }
+    }
+    ml=max(l,ml);
+    cout<<ml;
+    return 0;
+}
+}
+
+namespace ch010913{
+int n,t;
+map<int,int> ns;
+int main(){
+    cin>>n;
+    for(int i=1;i<=n;i++){
+        cin>>t;
+        if(!ns[t])cout<<t<<' ';
+        ns[t]++;
+    }
+    return 0;
+}
+}
+
+namespace ch010914{
+struct carpet{
+	int x1,y1,x2,y2;
+}cs[10005];
+int n;
+int main(){
+	cin>>n;
+	int lx,ly;
+	for(int i=1;i<=n;i++){
+		cin>>cs[i].x1>>cs[i].y1;
+		cin>>lx>>ly;
+		cs[i].x2=cs[i].x1+lx;
+		cs[i].y2=cs[i].y1+ly;
+	}
+	int x,y;
+	cin>>x>>y;
+	int i;
+	for(i=n;i>0;i--){
+		if(cs[i].x1<=x&&x<=cs[i].x2
+		 &&cs[i].y1<=y&&y<=cs[i].y2){
+			cout<<i;
+			break;
+		 }
+	}
+	if(i==0)cout<<-1;
+	return 0;
+}
 }

@@ -110,3 +110,37 @@ int ch010810(){
 	}
 	return 0;
 }
+
+namespace ch010812{
+char ns[11][11],target[11][11];
+int n,m[6];
+int main(){
+	cin>>n;
+	for(int i=1;i<=n;i++){
+		for(int j=1;j<=n;j++){
+			cin>>ns[i][j];
+		}
+	}
+	for(int i=1;i<=n;i++){
+		for(int j=1;j<=n;j++){
+			cin>>target[i][j];
+		}
+	}
+	for(int i=1;i<=n;i++){
+		for(int j=1;j<=n;j++){
+			if(target[i][j]==ns[i][j])m[4]++;
+			if(target[j][n+1-i]==ns[i][j])m[1]++;
+			if(target[n+1-j][i]==ns[i][j])m[2]++;
+			if(target[n+1-i][n+1-j]==ns[i][j])m[3]++;
+			m[5]++;
+		}
+	}
+	for(int i=1;i<=5;i++){
+		if(m[i]==n*n){
+			cout<<i;
+			break;
+		}
+	}
+	return 0;
+}
+}

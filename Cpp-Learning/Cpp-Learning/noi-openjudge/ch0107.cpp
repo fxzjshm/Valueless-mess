@@ -36,6 +36,35 @@ int ch010702(){
     return 0;
 }
 
+namespace pnoi010702{
+struct c{
+	int n,i;
+}cs['z'+1];
+string s;
+int main(){
+	cin>>s;
+	for(int i='a';i<='z';i++){
+		cs[i].n=0;
+		cs[i].i=0x7FFFFFFF;
+	}
+	for(int i=0;i<s.size();i++){
+		cs[s[i]].n++;
+		cs[s[i]].i=min(cs[s[i]].i,i);
+	}
+	int mind=0x7f7f7f7f;
+	char minc;
+	for(int i='a';i<='z';i++){
+		if(cs[i].n==1&&mind>cs[i].i){
+			mind=cs[i].i;
+			minc=i;
+		}
+	}
+	if(mind!=0x7f7f7f7f)cout<<minc;
+	else cout<<"no";
+	return 0;
+}
+
+}
 
 int ch010703(){
 	double n;
@@ -129,6 +158,43 @@ int ch010710(){
 	gets(s);
 	for(int i=0;i<strlen(s);i++)cout<<ch010710t(s[i]);
 	return 0;
+}
+
+namespace ch010711{
+map<char,char> en,de;/*-crypt*/
+bool b=true;
+int main(){
+	string s1,s2,s,d;/*s1:raw,s2:encrypted*/
+	getline(cin,s2);
+	getline(cin,s1);
+	getline(cin,s);
+	for(int i=0;i<=s1.length();i++){
+		if((!en.count(s1[i]))&&(!de.count(s2[i]))){
+			en[s1[i]]=s2[i];
+			de[s2[i]]=s1[i];
+		}else if(en[s1[i]]==s2[i]&&de[s2[i]]==s1[i]){
+
+		}else{
+			b=false;
+			break;
+		}
+	}
+	if(b){
+        if(de.size()<27)goto LF;
+		for(int i=0;i<s.size();i++){
+			if(!de.count(s[i])){
+				goto LF;
+			}else{
+				d+=de[s[i]];
+			}
+		}
+		cout<<d;
+	}else{
+		LF:cout<<"Failed";
+	}
+
+	return 0;
+}
 }
 
 char ch010712g(char x){
@@ -311,4 +377,48 @@ int ch010729(){
 		else cout<<t;
 	}
 	return 0;
+}
+
+namespace ch010731{
+int ml=-1,last,t,l=1;
+string s;
+int main(){
+    cin>>s;
+    last=s[0]-'0';
+    for(int i=1;i<s.size();i++){
+        t=s[i]-'0';
+        if(t==last){
+            l++;
+        }else{
+            cout<<l<<last;
+            last=t;
+            l=1;
+        }
+    }
+    cout<<l<<last;
+    return 0;
+}
+}
+
+namespace ch010732{
+int main(){
+	string s;
+	cin>>s;
+	for(int i=0;i<s.size();i++){
+		if('a'<=s[i]&&s[i]<='z')s[i]=s[i]-'a'+'A';
+	}
+	char c=s[0];
+	int len=1;
+	for(int i=1;i<s.size();i++){
+		if(s[i]!=c){
+			cout<<"("<<c<<","<<len<<")";
+			c=s[i];
+			len=1;
+		}else{
+			len++;
+		}
+	}
+	cout<<"("<<c<<","<<len<<")";
+	return 0;
+}
 }

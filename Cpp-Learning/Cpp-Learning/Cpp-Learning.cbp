@@ -83,7 +83,12 @@
 		<Unit filename="luogu/1880.cpp" />
 		<Unit filename="main.cpp" />
 		<Unit filename="noi-openjudge/1751.cpp" />
+		<Unit filename="noi-openjudge/1809.cpp" />
+		<Unit filename="noi-openjudge/2722.cpp" />
+		<Unit filename="noi-openjudge/2983.cpp" />
+		<Unit filename="noi-openjudge/6184.cpp" />
 		<Unit filename="noi-openjudge/6261.cpp" />
+		<Unit filename="noi-openjudge/8755.cpp" />
 		<Unit filename="noi-openjudge/buggy/ch011311.cpp">
 			<Option link="0" />
 			<Option target="&lt;{~None~}&gt;" />

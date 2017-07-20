@@ -2,7 +2,7 @@
 #include<iostream>
 #include<string>
 using namespace std;
-namespace pn6261{
+namespace pnoi6261{
 void dfs(int i,char a,char b,char c){ // a---c--->b
 	if(i>0){
 		dfs(i-1,a,c,b);

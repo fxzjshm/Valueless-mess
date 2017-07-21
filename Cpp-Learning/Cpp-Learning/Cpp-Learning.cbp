@@ -89,6 +89,7 @@
 		<Unit filename="noi-openjudge/6184.cpp" />
 		<Unit filename="noi-openjudge/6261.cpp" />
 		<Unit filename="noi-openjudge/8755.cpp" />
+		<Unit filename="noi-openjudge/8757.cpp" />
 		<Unit filename="noi-openjudge/buggy/ch011311.cpp">
 			<Option link="0" />
 			<Option target="&lt;{~None~}&gt;" />

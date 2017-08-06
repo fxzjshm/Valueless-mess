@@ -118,7 +118,7 @@ int main(){
 
 int ch010908(){
     int n;
-    double t,a;
+    double t=0.0,a;
     cin>>n;
     double ns[n];
     for(int i=0;i<n;i++){

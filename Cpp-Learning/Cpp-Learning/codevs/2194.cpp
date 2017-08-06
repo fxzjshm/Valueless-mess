@@ -31,5 +31,6 @@ int main(){
 	cin>>n;
 	dfs(1);
 	cout<<a;
+	return 0;
 }
 }

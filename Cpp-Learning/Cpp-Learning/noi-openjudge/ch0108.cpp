@@ -60,7 +60,7 @@ int ch010806(){
 }
 
 int ch010808(){
-	int m,n,a=0;
+	int m,n/*,a=0*/;
 	cin>>m>>n;
 	int ns[m][n];
 	for(int i=0;i<m;i++)
@@ -81,7 +81,7 @@ int ch010808(){
 }
 
 int ch010809(){
-	int n,f=1,t=1;
+	int n/*,f=1*/,t=1;
 	cin>>n;
 	int a[n];
 	for(int i=0;i<n;i++)

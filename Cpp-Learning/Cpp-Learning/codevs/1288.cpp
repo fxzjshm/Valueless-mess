@@ -7,7 +7,7 @@ namespace p1288{
 int deplim,a,b,ans[10000],ns[10000],f=0;
 bool check(){
 	if(ns[deplim]!=0&&ans[deplim]>ns[deplim]){
-		double t;
+		double t=0.0;
 		for(int i=1;i<=deplim;i++){
 			t+=1.0/ns[i];
 		}

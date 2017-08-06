@@ -1,3 +1,4 @@
+// Time Limit Exceeded
 #include<cstdio>
 using namespace std;
 namespace p1082{

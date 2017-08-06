@@ -24,5 +24,6 @@ int main(){
             ans*=f[i]+1;
         cout<<ans<<endl;
     }
+    return 0;
 }
 }

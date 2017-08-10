@@ -21,8 +21,8 @@ int ch010702(){
     int cs[256];
     for(int i=0;i<256;i++)cs[i]=-1;
     for(int i=0;i<s.size();i++){
-        if(cs[s[i]]==-1)cs[s[i]]=i;
-        else cs[s[i]]=-2;
+        if(cs[(int)s[i]]==-1)cs[(int)s[i]]=i;
+        else cs[(int)s[i]]=-2;
     }
     string a="no";
     int id=s.size();
@@ -48,8 +48,8 @@ int main(){
 		cs[i].i=0x7FFFFFFF;
 	}
 	for(int i=0;i<s.size();i++){
-		cs[s[i]].n++;
-		cs[s[i]].i=min(cs[s[i]].i,i);
+		cs[(int)s[i]].n++;
+		cs[(int)s[i]].i=min(cs[(int)s[i]].i,i);
 	}
 	int mind=0x7f7f7f7f;
 	char minc;
@@ -338,6 +338,7 @@ int ch010726(){
 		return 0;
 	}
 	l+=s1.size()-1;
+	r=-1;
 	for(int i=s.size()-1;i>-1;i--){
 		t1=s.find(s2,i);
 		if(t1!=string::npos){

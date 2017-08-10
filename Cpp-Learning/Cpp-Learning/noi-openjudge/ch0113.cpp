@@ -173,7 +173,7 @@ int main(){
 	for(int i=1;i<=n;i++){
 		cin>>ord>>s;
 		for(int i=0;i<s.length();i++){
-			ns[s[i]].push_back(ord);
+			ns[(int)s[i]].push_back(ord);
 		}
 	}
 	int ind='A';

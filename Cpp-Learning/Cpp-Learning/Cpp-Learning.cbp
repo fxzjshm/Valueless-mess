@@ -39,8 +39,11 @@
 		</Compiler>
 		<Unit filename="218.5.5.242.9018/1261.cpp" />
 		<Unit filename="218.5.5.242.9018/1301.cpp" />
+		<Unit filename="bzoj/1051.cpp" />
 		<Unit filename="bzoj/1087.cpp" />
+		<Unit filename="bzoj/1179.cpp" />
 		<Unit filename="bzoj/1202.cpp" />
+		<Unit filename="codeforces/427C.cpp" />
 		<Unit filename="codevs/1004.cpp" />
 		<Unit filename="codevs/1008.cpp" />
 		<Unit filename="codevs/1011.cpp" />
@@ -74,6 +77,7 @@
 		<Unit filename="codevs/2152.cpp" />
 		<Unit filename="codevs/2194.cpp" />
 		<Unit filename="codevs/2451.cpp" />
+		<Unit filename="codevs/2822.cpp" />
 		<Unit filename="codevs/3038.cpp" />
 		<Unit filename="codevs/3143.cpp" />
 		<Unit filename="codevs/3145.cpp" />
@@ -120,6 +124,7 @@
 		<Unit filename="noi-openjudge/ch0108.cpp" />
 		<Unit filename="noi-openjudge/ch0109.cpp" />
 		<Unit filename="noi-openjudge/ch0113.cpp" />
+		<Unit filename="poj/1523.cpp" />
 		<Unit filename="poj/3134.cpp" />
 		<Unit filename="poj/3254.cpp" />
 		<Unit filename="rqnoj/343.cpp" />

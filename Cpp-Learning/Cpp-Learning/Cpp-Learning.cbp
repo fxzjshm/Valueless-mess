@@ -104,12 +104,21 @@
 		<Unit filename="luogu/1880.cpp" />
 		<Unit filename="luogu/2831.cpp" />
 		<Unit filename="main.cpp" />
+		<Unit filename="noi-openjudge/1720.cpp" />
+		<Unit filename="noi-openjudge/1720.java">
+			<Option link="0" />
+		</Unit>
 		<Unit filename="noi-openjudge/1751.cpp" />
 		<Unit filename="noi-openjudge/1809.cpp" />
 		<Unit filename="noi-openjudge/2722.cpp" />
 		<Unit filename="noi-openjudge/2983.cpp" />
 		<Unit filename="noi-openjudge/6184.cpp" />
+		<Unit filename="noi-openjudge/6250.cpp" />
 		<Unit filename="noi-openjudge/6261.cpp" />
+		<Unit filename="noi-openjudge/7556.cpp" />
+		<Unit filename="noi-openjudge/7713.cpp" />
+		<Unit filename="noi-openjudge/8170.cpp" />
+		<Unit filename="noi-openjudge/8181.cpp" />
 		<Unit filename="noi-openjudge/8755.cpp" />
 		<Unit filename="noi-openjudge/8757.cpp" />
 		<Unit filename="noi-openjudge/buggy/ch011311.cpp">

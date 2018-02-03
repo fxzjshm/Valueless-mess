@@ -1,6 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
-int main(){
+// namespace pN{
+/*int main(){
     return 0;
-}
-
+}*/
+// }

@@ -3,6 +3,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <vector>
+namespace pnoi011311buggy{
 using namespace std;
 bool isNotFactable(unsigned long n){
     if(n<2)return false;
@@ -57,4 +58,6 @@ int main(){
         cout<<nums[i];
         if(i!=nums.size()-1)cout<<" ";
     }
+    return 0;
+}
 }

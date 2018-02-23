@@ -1,6 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
-namespace p1720{
+namespace pnoi1720{
 int main(){
     int n;
     cin>>n;

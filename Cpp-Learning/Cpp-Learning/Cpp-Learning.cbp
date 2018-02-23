@@ -10,7 +10,7 @@
 				<Option output="bin/Debug/Cpp-Learning" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
-				<Option compiler="clang" />
+				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-Wall" />
 					<Add option="-g" />
@@ -104,14 +104,31 @@
 		<Unit filename="luogu/1880.cpp" />
 		<Unit filename="luogu/2831.cpp" />
 		<Unit filename="main.cpp" />
+		<Unit filename="noi-openjudge/1406" />
+		<Unit filename="noi-openjudge/1695.cpp" />
+		<Unit filename="noi-openjudge/1707.cpp" />
 		<Unit filename="noi-openjudge/1720.cpp" />
 		<Unit filename="noi-openjudge/1720.java">
 			<Option link="0" />
 		</Unit>
+		<Unit filename="noi-openjudge/1727.cpp" />
 		<Unit filename="noi-openjudge/1751.cpp" />
+		<Unit filename="noi-openjudge/1807.cpp" />
 		<Unit filename="noi-openjudge/1809.cpp" />
+		<Unit filename="noi-openjudge/2000.cpp" />
+		<Unit filename="noi-openjudge/2179.cpp" />
+		<Unit filename="noi-openjudge/2454.cpp" />
+		<Unit filename="noi-openjudge/2455.cpp" />
+		<Unit filename="noi-openjudge/2469.cpp" />
+		<Unit filename="noi-openjudge/2704.cpp" />
+		<Unit filename="noi-openjudge/2705.cpp" />
 		<Unit filename="noi-openjudge/2722.cpp" />
+		<Unit filename="noi-openjudge/2728.cpp" />
+		<Unit filename="noi-openjudge/2950.cpp" />
+		<Unit filename="noi-openjudge/2971.cpp" />
 		<Unit filename="noi-openjudge/2983.cpp" />
+		<Unit filename="noi-openjudge/2986.cpp" />
+		<Unit filename="noi-openjudge/2987.cpp" />
 		<Unit filename="noi-openjudge/6184.cpp" />
 		<Unit filename="noi-openjudge/6250.cpp" />
 		<Unit filename="noi-openjudge/6261.cpp" />
@@ -124,10 +141,7 @@
 		<Unit filename="noi-openjudge/8181.cpp" />
 		<Unit filename="noi-openjudge/8755.cpp" />
 		<Unit filename="noi-openjudge/8757.cpp" />
-		<Unit filename="noi-openjudge/buggy/ch011311.cpp">
-			<Option link="0" />
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
+		<Unit filename="noi-openjudge/buggy/ch011311.cpp" />
 		<Unit filename="noi-openjudge/ch0101.cpp" />
 		<Unit filename="noi-openjudge/ch0102.cpp" />
 		<Unit filename="noi-openjudge/ch0103.cpp" />

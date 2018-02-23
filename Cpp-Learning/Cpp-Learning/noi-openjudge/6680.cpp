@@ -1,6 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
-// namespace p6680{
+namespace p6680{
 inline void p(char c,int i){
     printf("%d%c",i,c);
 }
@@ -18,4 +18,4 @@ int main(){
     p(s[s.size()-1],n);
     return 0;
 }
-// }
+}

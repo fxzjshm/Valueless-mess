@@ -20,13 +20,13 @@ bool dfs(char s,char t){
     return false;
 }
 int main(){
-	while(gets(s)){
+	while(fgets(s,sizeof(s),stdin)){
 		memset(word,0,sizeof(word));
 		while(s[0]!='0'){
 			word[n].l=s[0];
 			word[n].r=s[strlen(s)-1];
 			n++;
-			gets(s);
+			fgets(s,sizeof(s),stdin);
 		}
 		if(dfs('b','m'))printf("Yes.\n");
 		else printf("No.\n");

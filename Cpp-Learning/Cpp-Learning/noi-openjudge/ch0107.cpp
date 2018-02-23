@@ -7,7 +7,7 @@ int ch010701(){
 	int a=0;
 	for(int i=0;i<l;i++)
 		bs[i]=0;
-	gets(bs);
+	fgets(bs,sizeof(bs),stdin);
 	for(int i=0;i<l;i++)
 		('0'<=bs[i]&&'9'>=bs[i])?a++:0;
 	cout<<a;
@@ -96,7 +96,7 @@ int ch010704(){
 
 int ch010705(){
     char s[105],s1[105];
-    gets(s); // ' '
+    fgets(s,sizeof(s),stdin);
     int l=strlen(s);
     strcpy(s1,s);
     for(int i=0;i<l-1;i++)s1[i]=s[i]+s[i+1];
@@ -155,7 +155,7 @@ char ch010710t(char a){
 }
 int ch010710(){
 	char s[205];
-	gets(s);
+	fgets(s,sizeof(s),stdin);
 	for(int i=0;i<strlen(s);i++)cout<<ch010710t(s[i]);
 	return 0;
 }
@@ -235,7 +235,7 @@ char ch010714t(char a){
 }
 int ch010714(){
 	char s[105];
-	gets(s);
+	fgets(s,sizeof(s),stdin);
 	for(int i=0;i<strlen(s);i++)cout<<ch010714t(s[i]);
 	return 0;
 }

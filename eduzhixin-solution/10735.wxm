@@ -1,0 +1,20 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 16.12.2 ] */
+
+/* [wxMaxima: input   start ] */
+/*a:k1,b:k2*/
+eq1:'diff(v,t)*m=a*t-b*v;
+sol1:ode2(eq1,v,t);
+sol2:expand(ratsimp(sol1));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+sol3:expand(ratsimp(ic1(sol2,t=0,v=0)));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+solve([sol3,a=14.3,b=13.2,m=9.92,t=4.10]);
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

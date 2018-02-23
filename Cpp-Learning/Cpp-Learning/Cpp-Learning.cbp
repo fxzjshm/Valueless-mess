@@ -104,7 +104,6 @@
 		<Unit filename="luogu/1880.cpp" />
 		<Unit filename="luogu/2831.cpp" />
 		<Unit filename="main.cpp" />
-		<Unit filename="noi-openjudge/1406" />
 		<Unit filename="noi-openjudge/1695.cpp" />
 		<Unit filename="noi-openjudge/1707.cpp" />
 		<Unit filename="noi-openjudge/1720.cpp" />
@@ -113,8 +112,13 @@
 		</Unit>
 		<Unit filename="noi-openjudge/1727.cpp" />
 		<Unit filename="noi-openjudge/1751.cpp" />
+		<Unit filename="noi-openjudge/1776.cpp" />
+		<Unit filename="noi-openjudge/1797.cpp" />
+		<Unit filename="noi-openjudge/1802.cpp" />
 		<Unit filename="noi-openjudge/1807.cpp" />
 		<Unit filename="noi-openjudge/1809.cpp" />
+		<Unit filename="noi-openjudge/1822.cpp" />
+		<Unit filename="noi-openjudge/1931.cpp" />
 		<Unit filename="noi-openjudge/2000.cpp" />
 		<Unit filename="noi-openjudge/2179.cpp" />
 		<Unit filename="noi-openjudge/2454.cpp" />
@@ -124,6 +128,7 @@
 		<Unit filename="noi-openjudge/2705.cpp" />
 		<Unit filename="noi-openjudge/2722.cpp" />
 		<Unit filename="noi-openjudge/2728.cpp" />
+		<Unit filename="noi-openjudge/2729.cpp" />
 		<Unit filename="noi-openjudge/2950.cpp" />
 		<Unit filename="noi-openjudge/2971.cpp" />
 		<Unit filename="noi-openjudge/2983.cpp" />

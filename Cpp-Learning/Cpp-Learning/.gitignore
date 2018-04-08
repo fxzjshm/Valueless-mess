@@ -4,3 +4,4 @@ bin/
 *.depend
 *.obj
 *.exe
+*.class

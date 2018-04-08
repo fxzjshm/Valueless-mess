@@ -1,6 +1,6 @@
 #include <bits/stdc++.h>
-using namespace std;
 // namespace pN{
+using namespace std;
 /*int main(){
     return 0;
 }*/

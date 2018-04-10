@@ -175,6 +175,14 @@
 		<Unit filename="poj/3009.cpp" />
 		<Unit filename="poj/3134.cpp" />
 		<Unit filename="poj/3254.cpp" />
+		<Unit filename="projects/HanziProcess.java">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="projects/HanziProcess2.java">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
 		<Unit filename="rqnoj/343.cpp" />
 		<Unit filename="rqnoj/39.cpp" />
 		<Unit filename="rqnoj/49.cpp" />

@@ -31,6 +31,7 @@ public class Case4 {
         }
     }
     static volatile long cnt = 0;
+    static Random ran=new Random();
     static Runnable run = new Runnable() {
 
         @Override
@@ -51,16 +52,17 @@ public class Case4 {
                     out.print("ip=&hrUW3PG7mp3RLd3dJu=" + gU() + "&LxMzAX2jog9Bpjs07jP=" + gP());
                     out.flush();
                     /*
-                     * String result = ""; in = new BufferedReader(new
-                     * InputStreamReader(conn.getInputStream())); String line; while ((line =
-                     * in.readLine()) != null) { result += line; } // System.out.println(result);
-                     * FileOutputStream fos=new FileOutputStream(new File("result.html"));
-                     * fos.write(result.getBytes()); fos.close();
+                     String result = ""; in = new BufferedReader(new
+                     InputStreamReader(conn.getInputStream())); String line; while ((line =
+                     in.readLine()) != null) { result += line; }  System.out.println(result);
+                     FileOutputStream fos=new FileOutputStream(new File("result.html"));
+                      fos.write(result.getBytes()); fos.close();
+                     
+                    
+                     String location = conn.getHeaderField("Location");
+                     System.out.println(location);
                      */
-                    /*
-                     * String location = conn.getHeaderField("Location");
-                     * System.out.println(location);
-                     */
+                    Thread.sleep(66+ran.nextInt(233));
                 } catch (Exception e) {
                     // TODO Auto-generated catch block
                     // e.printStackTrace();
@@ -78,18 +80,25 @@ public class Case4 {
     };
 
     public static void main(String[] args) throws Exception {
+        Scanner in = new Scanner(System.in);
+        
         while (true) {
+            int n = in.nextInt();
+            for(int i=1;i<=n;i++) {
             ExecutorService cachedThreadPool = new ThreadPoolExecutor(0, Integer.MAX_VALUE, Long.MAX_VALUE,
                     TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
 
             cachedThreadPool.execute(() -> {
                 run.run();
             });
-            while (cnt != 0) {
+            Thread.sleep(13+ran.nextInt(250));
+            }
+            /*while (cnt != 0) {
                 Thread.sleep(500);
                 cnt--;
-            }
-            Thread.sleep(500);
+            }*/
+            // Thread.sleep(5000);
+            
         }
     }
 

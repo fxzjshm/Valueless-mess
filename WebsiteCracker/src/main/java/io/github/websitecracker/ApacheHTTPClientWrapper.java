@@ -70,7 +70,12 @@ public class ApacheHTTPClientWrapper extends ClientWrapper {
                 cachedThreadPool.execute(() -> {
                     run.run();
                 });
-                // Thread.sleep(13 + r.nextInt(250));
+                try {
+                    Thread.sleep(13 + U.r.nextInt(250));
+                } catch (InterruptedException e) {
+                    // TODO Auto-generated catch block
+                    // e.printStackTrace();
+                }
             }
         }
         // httpClient.close();
@@ -94,9 +99,10 @@ public class ApacheHTTPClientWrapper extends ClientWrapper {
 
                 while (true) {
                     try {
-                        ArrayList<NameValuePair> list = new ArrayList<>(2);
+                        ArrayList<NameValuePair> list = new ArrayList<>(3);
                         list.add(new BasicNameValuePair(w.unf, U.gU()));
                         list.add(new BasicNameValuePair(w.pwf, U.gP()));
+                        list.add(new BasicNameValuePair("ip", ""));
 
                         HttpPost post = new HttpPost(w.t);
                         post.addHeader("Accept", "*/*");

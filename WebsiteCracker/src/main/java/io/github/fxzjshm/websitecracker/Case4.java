@@ -1,4 +1,4 @@
-package io.github.websitecracker;
+package io.github.fxzjshm.websitecracker;
 public class Case4 {
     public static void main(String[] args) throws Exception {
         new JDKClientWrapper("http://5b3a49d6-1.cd.1257014834.clb.myqcloud.com/save.php",

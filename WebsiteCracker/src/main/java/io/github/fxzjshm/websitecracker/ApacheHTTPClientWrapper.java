@@ -1,11 +1,10 @@
-package io.github.websitecracker;
+package io.github.fxzjshm.websitecracker;
 
 import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Scanner;
-import java.util.TreeSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -18,7 +17,6 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.HttpClientContext;
-import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -27,7 +25,6 @@ import org.apache.http.impl.cookie.BasicClientCookie;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
-import org.apache.http.util.EntityUtils;
 
 public class ApacheHTTPClientWrapper extends ClientWrapper {
     PoolingHttpClientConnectionManager cm;
@@ -42,6 +39,8 @@ public class ApacheHTTPClientWrapper extends ClientWrapper {
         cm = new PoolingHttpClientConnectionManager();
         cm.setMaxTotal(100000);
         cm.setDefaultMaxPerRoute(100000);
+        cm.setValidateAfterInactivity(25000);
+
 
         store = new BasicCookieStore();
         BasicClientCookie cookie0 = new BasicClientCookie("userid", "0");
@@ -51,6 +50,7 @@ public class ApacheHTTPClientWrapper extends ClientWrapper {
                 .setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.IGNORE_COOKIES)
                         /*.setConnectionRequestTimeout(1).setConnectTimeout(1).setSocketTimeout(1)*/.build())
                 .build();
+
         context = new BasicHttpContext();
         context.setAttribute(HttpClientContext.COOKIE_STORE, store);
     }
@@ -71,7 +71,7 @@ public class ApacheHTTPClientWrapper extends ClientWrapper {
                     run.run();
                 });
                 try {
-                    Thread.sleep(13 + U.r.nextInt(250));
+                    Thread.sleep(666 + U.r.nextInt(233));
                 } catch (InterruptedException e) {
                     // TODO Auto-generated catch block
                     // e.printStackTrace();
@@ -94,8 +94,8 @@ public class ApacheHTTPClientWrapper extends ClientWrapper {
             try {
                 Field field = BasicCookieStore.class.getDeclaredField("cookies");
                 field.setAccessible(true);
-                @SuppressWarnings("unchecked")
-                TreeSet<Cookie> cookies = (TreeSet<Cookie>) field.get(w.store);
+                // @SuppressWarnings("unchecked")
+                // TreeSet<Cookie> cookies = (TreeSet<Cookie>) field.get(w.store);
 
                 while (true) {
                     try {
@@ -106,7 +106,7 @@ public class ApacheHTTPClientWrapper extends ClientWrapper {
 
                         HttpPost post = new HttpPost(w.t);
                         post.addHeader("Accept", "*/*");
-                        post.addHeader("Connection", "close");
+                        post.addHeader("Connection", "Keep-Alive");
                         post.addHeader("User-Agent", w.ua);
                         post.addHeader("Cookie", "userid=0");
                         // cookies.
@@ -122,8 +122,8 @@ public class ApacheHTTPClientWrapper extends ClientWrapper {
                         post.setEntity(new UrlEncodedFormEntity(list));
 
                         HttpResponse response = w.httpClient.execute(post, w.context);
-
-                        System.out.println(EntityUtils.toString(response.getEntity()));
+                        post.releaseConnection();
+                        // System.out.println(EntityUtils.toString(response.getEntity()));
                         // Thread.sleep(66 + U.r.nextInt(233));
                     } catch (Exception e) {
                     }

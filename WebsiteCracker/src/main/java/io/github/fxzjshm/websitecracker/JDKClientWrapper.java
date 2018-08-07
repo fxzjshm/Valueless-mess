@@ -1,4 +1,4 @@
-package io.github.websitecracker;
+package io.github.fxzjshm.websitecracker;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

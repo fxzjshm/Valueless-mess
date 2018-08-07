@@ -1,4 +1,4 @@
-package io.github.websitecracker;
+package io.github.fxzjshm.websitecracker;
 public class Case3 {
     public static void main(String[] args) {
         for (int i = 1; i <= 4; i++) {

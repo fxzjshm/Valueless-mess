@@ -1,4 +1,4 @@
-package io.github.websitecracker;
+package io.github.fxzjshm.websitecracker;
 public class C {
 
     public static void main(String[] args) throws Exception {

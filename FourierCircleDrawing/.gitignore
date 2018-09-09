@@ -1,0 +1,7 @@
+/build/
+*.dll
+*.pyc
+*.class
+/bin/
+/.settings/
+/.gradle/

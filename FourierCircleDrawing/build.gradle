@@ -1,0 +1,35 @@
+plugins {
+    id "com.github.hierynomus.jython" version "0.6.0"
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+sourceSets.main.java.srcDirs = [ "src/main/java" ]
+String mainClassName = "com.github.fxzjshm.test.Draw"
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    jcenter()
+}
+
+dependencies {
+    compile "org.processing:core:3.3.7"
+    compile 'org.python:jython:2.7.0'
+    jython ":future:0.16.0"
+}
+
+task dist(type: Jar) {
+    from files(sourceSets.main.output.classesDir)
+    from files(sourceSets.main.output.resourcesDir)
+    from {configurations.compile.collect {zipTree(it)}}
+    // from files(project.assetsDir);
+ 
+    manifest {
+        attributes 'Main-Class': mainClassName
+    }
+}
+dist.dependsOn classes

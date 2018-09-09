@@ -1,0 +1,3 @@
+x86_64-w64-mingw32-gcc -shared -o test.dll -fPIC -I /usr/lib/jvm/java-8-openjdk-amd64/include -I /usr/lib/jvm/java-8-openjdk-amd64/include/linux  com_github_fxzjshm_test_Draw.c -g -O0
+
+gcc -shared -o test.dll -fPIC -I "%JAVA_HOME%\include" -I "%JAVA_HOME%\include\win32"  com_github_fxzjshm_test_Draw.c

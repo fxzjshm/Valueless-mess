@@ -1,0 +1,10 @@
+/home/fxzjshm/program/Sdk/cmake/3.6.4111459/bin/cmake \
+-DANDROID_ABI=armeabi-v7a \
+-DANDROID_NDK=/home/fxzjshm/program/android-ndk-r19-beta2 \
+-DCMAKE_TOOLCHAIN_FILE=/home/fxzjshm/program/android-ndk-r19-beta2/build/cmake/android.toolchain.cmake \
+-DANDROID_TOOLCHAIN=clang \
+-DCMAKE_BUILD_TYPE=Debug \
+-DOPENCL_INCLUDE_DIRS=/home/fxzjshm/workspace/opencl-jni/include \
+-DOPENCL_LIBRARIES=/home/fxzjshm/workspace/opencl-jni/lib/libGLES_mali.so \
+-DANDROID_PLATFORM=android-21 \
+..

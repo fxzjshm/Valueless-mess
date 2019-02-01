@@ -30,7 +30,7 @@ public class Draw extends PApplet {
     PVector lastPos = new PVector();
     float t = -0f;// init t.If you want program to start drawing at beginning,set this to 0.
     int reversey = 1;
-    private float rotationSpeed = 0.05f;
+    private float rotationSpeed = 0.0233f;
 
     // final Object lock1 = new Object(), lock2 = new Object();
 
@@ -51,7 +51,7 @@ public class Draw extends PApplet {
             @Override
             public Double call() throws Exception {
                 double x = x(t);
-                // System.out.println(x);
+                System.out.println(x);
                 return (x / 5);
             }
         });
@@ -59,7 +59,7 @@ public class Draw extends PApplet {
             @Override
             public Double call() throws Exception {
                 double y = y(t);
-                // System.out.println(y);
+                System.out.println(y);
                 return (y / 5);
             }
         });
@@ -79,7 +79,7 @@ public class Draw extends PApplet {
         stroke(10, 255, 10);
         fill(100, 124, 255, 150);
         ellipse(pointer.x * size.x + width / 2f, reversey * pointer.y * size.y +
-                height / 2f, 12, 12);
+                height / 2f, 66, 66);
         if (t >= 0) {
             spot.beginDraw();
             spot.noStroke();
@@ -88,7 +88,7 @@ public class Draw extends PApplet {
             spot.fill(0, 155, 255);
             spot.translate(spot.width / 2f, spot.height / 2f);
             // spot.line(lastPos.x*size.x,lastPos.y*size.y,pointer.x*size.x,pointer.y*size.y);
-            spot.ellipse(pointer.x * size.x, reversey * pointer.y * size.y, 3, 3);
+            spot.ellipse(pointer.x * size.x, reversey * pointer.y * size.y, 2.333f, 2.333f);
             spot.endDraw();
             image(spot, 0, 0);
         }

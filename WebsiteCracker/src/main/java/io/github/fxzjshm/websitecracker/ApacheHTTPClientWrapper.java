@@ -15,6 +15,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.impl.client.BasicCookieStore;
@@ -46,9 +47,10 @@ public class ApacheHTTPClientWrapper extends ClientWrapper {
         BasicClientCookie cookie0 = new BasicClientCookie("userid", "0");
         cookie0.setDomain(new URL(target).getHost());
         store.addCookie(cookie0);
+        RequestConfig requestConfig=RequestConfig.custom().setCookieSpec(CookieSpecs.IGNORE_COOKIES)
+                /*.setConnectionRequestTimeout(1).setConnectTimeout(1).setSocketTimeout(1)*/.setRedirectsEnabled(false).build();
         httpClient = HttpClients.custom().setConnectionManager(cm).setDefaultCookieStore(store)
-                .setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.IGNORE_COOKIES)
-                        /*.setConnectionRequestTimeout(1).setConnectTimeout(1).setSocketTimeout(1)*/.build())
+                .setDefaultRequestConfig(requestConfig)
                 .build();
 
         context = new BasicHttpContext();
@@ -63,29 +65,29 @@ public class ApacheHTTPClientWrapper extends ClientWrapper {
             int n = in.nextInt();
             System.out.println("+" + n);
             for (int i = 1; i <= n; i++) {
-                R run = new R(this);
+                RunnablePost run = new RunnablePost(this);
                 ExecutorService cachedThreadPool = new ThreadPoolExecutor(0, Integer.MAX_VALUE, Long.MAX_VALUE,
                         TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
 
                 cachedThreadPool.execute(() -> {
                     run.run();
                 });
-                try {
+                /*try {
                     Thread.sleep(666 + U.r.nextInt(233));
                 } catch (InterruptedException e) {
                     // TODO Auto-generated catch block
                     // e.printStackTrace();
-                }
+                }*/
             }
         }
         // httpClient.close();
     }
 
-    public static class R implements Runnable {
+    public static class RunnablePost implements Runnable {
 
         final ApacheHTTPClientWrapper w;
 
-        public R(ApacheHTTPClientWrapper w) {
+        public RunnablePost(ApacheHTTPClientWrapper w) {
             this.w = w;
         }
 

@@ -42,7 +42,7 @@ public class Case7 extends ApacheHTTPClientWrapper {
                     get.addHeader("Host", "cdn.tldcnm.com");
 
                     response = httpClient.execute(get, context);
-                    System.out.println(response.getStatusLine().getStatusCode());
+                    System.out.println(System.currentTimeMillis() + " : " + response.getStatusLine().getStatusCode());
                     get.releaseConnection();
                 } catch (IOException e) {
                     // e.printStackTrace();

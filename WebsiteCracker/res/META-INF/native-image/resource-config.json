@@ -1,0 +1,8 @@
+{
+  "resources":[
+    {"pattern":"META-INF/services/jdk.vm.ci.hotspot.HotSpotJVMCIBackendFactory"}, 
+    {"pattern":"META-INF/services/jdk.vm.ci.services.JVMCIServiceLocator"}, 
+    {"pattern":"mozilla/public-suffix-list.txt"}, 
+    {"pattern":"org/apache/http/client/version.properties"}
+  ]
+}

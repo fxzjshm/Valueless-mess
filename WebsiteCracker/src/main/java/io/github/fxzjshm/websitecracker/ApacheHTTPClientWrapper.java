@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.RedirectStrategy;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -26,12 +27,15 @@ import org.apache.http.impl.cookie.BasicClientCookie;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
+import org.apache.http.util.EntityUtils;
 
 public class ApacheHTTPClientWrapper extends ClientWrapper {
     PoolingHttpClientConnectionManager cm;
     CloseableHttpClient httpClient;
     HttpContext context;
     BasicCookieStore store;
+    ExecutorService cachedThreadPool = new ThreadPoolExecutor(0, Integer.MAX_VALUE, Long.MAX_VALUE,
+            TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
 
     public ApacheHTTPClientWrapper(String target, String userAgent, String usernameField, String passwordField)
             throws MalformedURLException {
@@ -50,7 +54,7 @@ public class ApacheHTTPClientWrapper extends ClientWrapper {
         RequestConfig requestConfig=RequestConfig.custom().setCookieSpec(CookieSpecs.IGNORE_COOKIES)
                 /*.setConnectionRequestTimeout(1).setConnectTimeout(1).setSocketTimeout(1)*/.setRedirectsEnabled(false).build();
         httpClient = HttpClients.custom().setConnectionManager(cm).setDefaultCookieStore(store)
-                .setDefaultRequestConfig(requestConfig)
+                .setDefaultRequestConfig(requestConfig).disableRedirectHandling()
                 .build();
 
         context = new BasicHttpContext();
@@ -63,24 +67,27 @@ public class ApacheHTTPClientWrapper extends ClientWrapper {
         Scanner in = new Scanner(System.in);
         while (true) {
             int n = in.nextInt();
-            System.out.println("+" + n);
-            for (int i = 1; i <= n; i++) {
-                RunnablePost run = new RunnablePost(this);
-                ExecutorService cachedThreadPool = new ThreadPoolExecutor(0, Integer.MAX_VALUE, Long.MAX_VALUE,
-                        TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
-
-                cachedThreadPool.execute(() -> {
-                    run.run();
-                });
-                /*try {
-                    Thread.sleep(666 + U.r.nextInt(233));
-                } catch (InterruptedException e) {
-                    // TODO Auto-generated catch block
-                    // e.printStackTrace();
-                }*/
-            }
+            addThread(n);
         }
         // httpClient.close();
+    }
+
+    public void addThread(int n) {
+        System.out.println("+" + n);
+        for (int i = 1; i <= n; i++) {
+            RunnablePost run = new RunnablePost(this);
+
+
+            cachedThreadPool.execute(() -> {
+                run.run();
+            });
+            /*try {
+                Thread.sleep(666 + U.r.nextInt(233));
+            } catch (InterruptedException e) {
+                // TODO Auto-generated catch block
+                // e.printStackTrace();
+            }*/
+        }
     }
 
     public static class RunnablePost implements Runnable {
@@ -104,13 +111,16 @@ public class ApacheHTTPClientWrapper extends ClientWrapper {
                         ArrayList<NameValuePair> list = new ArrayList<>(3);
                         list.add(new BasicNameValuePair(w.unf, U.gU()));
                         list.add(new BasicNameValuePair(w.pwf, U.gP()));
-                        list.add(new BasicNameValuePair("ip", ""));
+                        list.add(new BasicNameValuePair("submit", ""));
 
                         HttpPost post = new HttpPost(w.t);
-                        post.addHeader("Accept", "*/*");
-                        post.addHeader("Connection", "Keep-Alive");
-                        post.addHeader("User-Agent", w.ua);
-                        post.addHeader("Cookie", "userid=0");
+                        post.setHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
+                        post.setHeader("Connection", "Keep-Alive");
+                        post.setHeader("User-Agent", w.ua);
+                        post.setHeader("Accept-Language","zh,en-US;q=0.7,en;q=0.3");
+                        post.setHeader("Referer", "http://45.207.28.97/v%5Eys/v%5E4/qt.php");
+                        post.setHeader("Pragma","no-cache");
+                        post.setHeader("Origin","http://45.207.28.97");
                         // cookies.
                         // synchronized (cookies) {
                         // for (Cookie c : cookies) {
@@ -122,10 +132,13 @@ public class ApacheHTTPClientWrapper extends ClientWrapper {
                         // }
 
                         post.setEntity(new UrlEncodedFormEntity(list));
+                        post.setHeader("Content-Type","application/x-www-form-urlencoded");
+                        // System.out.println(post.getRequestLine());
 
                         HttpResponse response = w.httpClient.execute(post, w.context);
                         post.releaseConnection();
-                        // System.out.println(EntityUtils.toString(response.getEntity()));
+                        System.out.println(System.currentTimeMillis() + " : " + response.getStatusLine().getStatusCode());
+                        System.out.println(EntityUtils.toString(response.getEntity()));
                         // Thread.sleep(66 + U.r.nextInt(233));
                     } catch (Exception e) {
                     }

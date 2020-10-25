@@ -1,0 +1,24 @@
+GET /dnf.php?u=2225588885&p=gvfghvgdfhj HTTP/1.1
+Host: cdn.tldcnm.com
+Connection: keep-alive
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Linux; Android 7.1.2; MI 5C Build/N2G47J; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/66.0.3359.126 MQQBrowser/6.2 TBS/045114 Mobile Safari/537.36 V1_AND_SQ_8.2.7_1334_YYB_D PA QQ/8.2.7.4410 NetType/WIFI WebP/0.3.0 Pixel/1080 StatusBarHeight/72 SimpleUISwitch/1
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,image/sharpp,image/apng,image/tpg,*/*;q=0.8
+Referer: https://cdn.tldcnm.com/
+Accept-Encoding: gzip, deflate, br
+Accept-Language: zh-CN,en-US;q=0.9
+Cookie: PHPSESSID=v6lc47vgqrv6vcle6a46m5anu5
+
+HTTP/1.1 302 Moved Temporarily
+Server: nginx
+Date: Thu, 27 Feb 2020 02:02:07 GMT
+Content-Type: text/html; charset=UTF-8
+Transfer-Encoding: chunked
+Connection: keep-alive
+Expires: Thu, 19 Nov 1981 08:52:00 GMT
+Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0
+Pragma: no-cache
+Location: https://h5.qzone.qq.com
+
+0
+

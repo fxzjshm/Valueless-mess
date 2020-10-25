@@ -169,6 +169,9 @@
 		<Unit filename="nowcoder/67/G.cpp" />
 		<Unit filename="nowcoder/67/H.cpp" />
 		<Unit filename="nowcoder/67/I.cpp" />
+		<Unit filename="poj/1008.cpp" />
+		<Unit filename="poj/1028.cpp" />
+		<Unit filename="poj/1050.cpp" />
 		<Unit filename="poj/1523.cpp" />
 		<Unit filename="poj/1651.cpp" />
 		<Unit filename="poj/2955.cpp" />
@@ -198,9 +201,6 @@
 				<Changes_Log show_changes_editor="0" app_title="released version %M.%m.%b of %p" changeslog_path="ChangesLog.txt" />
 				<Code header_guard="VERSION_H" namespace="AutoVersion" prefix="" />
 			</AutoVersioning>
-			<code_completion />
-			<envvars />
-			<debugger />
 			<lib_finder disable_auto="1" />
 		</Extensions>
 	</Project>

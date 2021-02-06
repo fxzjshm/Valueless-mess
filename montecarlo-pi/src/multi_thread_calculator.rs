@@ -8,11 +8,6 @@ pub struct MultiThreadCalculator {}
 
 impl MultiThreadCalculator {
     #[inline]
-    pub fn new() -> MultiThreadCalculator {
-        return MultiThreadCalculator {};
-    }
-
-    #[inline]
     fn gen_randoms_static(n: usize) -> (Vec<f64>, Vec<f64>) {
         let mut xs = vec![0.0; n];
         let mut ys = vec![0.0; n];
@@ -33,7 +28,7 @@ impl MultiThreadCalculator {
 
     #[inline]
     #[allow(unused_parens)]
-    fn cal_static(xs: &Arc<Vec<f64>>, ys: &Arc<Vec<f64>>, n: usize) -> u64 {
+    pub(crate) fn cal_static(xs: &Arc<Vec<f64>>, ys: &Arc<Vec<f64>>, n: usize) -> u64 {
         let cnt = Arc::new(Mutex::new(0 as u64));
 
         let thread_count = num_cpus::get();
@@ -61,6 +56,11 @@ impl MultiThreadCalculator {
 }
 
 impl MonteCarloPiCalculator for MultiThreadCalculator {
+    #[inline]
+    fn new(_n: usize) -> MultiThreadCalculator {
+        return MultiThreadCalculator {};
+    }
+
     #[inline]
     fn gen_randoms(&self, n: usize) -> (Vec<f64>, Vec<f64>) {
         return MultiThreadCalculator::gen_randoms_static(n);

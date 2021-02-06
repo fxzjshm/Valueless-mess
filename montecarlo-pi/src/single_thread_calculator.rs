@@ -4,10 +4,6 @@ use std::sync::Arc;
 pub struct SingleThreadCalculator {}
 
 impl SingleThreadCalculator {
-    pub fn new() -> SingleThreadCalculator {
-        return SingleThreadCalculator {};
-    }
-
     #[inline]
     fn gen_randoms_static(n: usize) -> (Vec<f64>, Vec<f64>) {
         let mut xs = vec![0.0; n];
@@ -37,6 +33,11 @@ impl SingleThreadCalculator {
 
 
 impl MonteCarloPiCalculator for SingleThreadCalculator {
+    #[inline]
+    fn new(_n: usize) -> SingleThreadCalculator {
+        return SingleThreadCalculator {};
+    }
+
     #[inline]
     fn gen_randoms(&self, n: usize) -> (Vec<f64>, Vec<f64>) {
         return SingleThreadCalculator::gen_randoms_static(n);

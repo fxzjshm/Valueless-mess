@@ -9,7 +9,7 @@ impl SingleThreadCalculator {
         let mut xs = vec![0.0; n];
         let mut ys = vec![0.0; n];
         for i in 0..n {
-            let t = gen_random(i as f64);
+            let t = gen_random(i as f64 / n as f64);
             let t = gen_random(t);
             let t = gen_random(t);
             xs[i] = gen_random(t);

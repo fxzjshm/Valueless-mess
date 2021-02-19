@@ -9,6 +9,7 @@ use self::ocl::{Device, Platform};
 use self::ocl::builders::DeviceSpecifier;
 use rayon::prelude::*;
 use std::rc::Rc;
+use std::time::Instant;
 
 pub struct OpenCLThreadCalculator {
     pro_que: ProQue,
@@ -32,12 +33,12 @@ static KERNEL_SRC: &'static str = r#"
         const real a = 3289579.0;
         const real b = 90238493.0;
         __private const real t = fma(a, x, b) / base;
-        __private const long t_int = (long) t;
-        return (t - (real) t_int);
+        return fmod(t, (real) 1.0);
     }
 
-    __kernel void gen_randoms(__global real* const xs, __global real* const ys, const unsigned long n){
-        const unsigned int i = get_global_id(0);
+    __kernel void gen_randoms(__global real* const xs, __global real* const ys){
+        const size_t i = get_global_id(0);
+        const size_t n = get_global_size(0);
         __private real t = gen_random(((real) i) / n);
         t = gen_random(t);
         t = gen_random(t);
@@ -62,8 +63,11 @@ impl OpenCLThreadCalculator {
         let mut ys = vec![0.0; n];
         let buffer_xs = self.pro_que.create_buffer::<f64>()?;
         let buffer_ys = self.pro_que.create_buffer::<f64>()?;
-        let kernel = self.pro_que.kernel_builder("gen_randoms").arg(&buffer_xs).arg(&buffer_ys).arg(n as u64).build()?;
+        let kernel = self.pro_que.kernel_builder("gen_randoms").arg(&buffer_xs).arg(&buffer_ys).build()?;
+        let start_time = Instant::now();
         unsafe { kernel.enq()?; }
+        self.pro_que.finish();
+        println!("kernel enqueue used: {}ms", start_time.elapsed().as_millis());
         buffer_xs.read(&mut xs).enq()?;
         buffer_ys.read(&mut ys).enq()?;
         return ocl::Result::Ok((xs, ys));
@@ -75,8 +79,11 @@ impl OpenCLThreadCalculator {
         let mut ys = vec![0.0; n];
         let buffer_xs = self.pro_que.create_buffer::<f32>()?;
         let buffer_ys = self.pro_que.create_buffer::<f32>()?;
-        let kernel = self.pro_que.kernel_builder("gen_randoms").arg(&buffer_xs).arg(&buffer_ys).arg(n as u64).build()?;
+        let kernel = self.pro_que.kernel_builder("gen_randoms").arg(&buffer_xs).arg(&buffer_ys).build()?;
+        let start_time = Instant::now();
         unsafe { kernel.enq()?; }
+        self.pro_que.finish();
+        println!("kernel enqueue used: {}ms", start_time.elapsed().as_millis());
         buffer_xs.read(&mut xs).enq()?;
         buffer_ys.read(&mut ys).enq()?;
         let mut xs_ret = vec![0.0; n];

@@ -1,5 +1,5 @@
 [package]
-name = "project1"
+name = "montecarlo-pi"
 version = "0.1.0"
 authors = ["fxzjshm <fxzjshm@163.com>"]
 edition = "2018"

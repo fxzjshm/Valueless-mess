@@ -109,6 +109,9 @@ impl MonteCarloPiCalculator for OpenCLThreadCalculator {
         let mut src = String::new() + KERNEL_SRC;
         if (use_f32) {
             src = (String::new() + "#define REAL float\n" + KERNEL_SRC);
+            println!("real -> f32 (float)");
+        } else {
+            println!("real -> f64 (double)");
         }
 
         let pro_que = ProQue::builder().platform(platform).device(device_spec).src(src).dims(n).build().expect("Build OpenCL kernel failed!");

@@ -12,10 +12,12 @@ use self::ocl::enums::KernelWorkGroupInfoResult;
 use core::mem;
 use self::ocl::core::ffi::clSetKernelArg;
 use std::ptr::null;
+use num::NumCast;
 
 pub struct OpenCLThreadCalculator {
     pro_que: ProQue,
     use_f32: bool,
+    is_unified_memory: bool,
 }
 
 static KERNEL_SRC: &'static str = r#"
@@ -88,10 +90,23 @@ impl OpenCLThreadCalculator {
 
     #[inline]
     fn try_gen_randoms_f64(&self, n: usize) -> ocl::Result<(Vec<f64>, Vec<f64>)> {
-        let mut xs = vec![0.0; n];
-        let mut ys = vec![0.0; n];
-        let buffer_xs = self.pro_que.create_buffer::<f64>()?;
-        let buffer_ys = self.pro_que.create_buffer::<f64>()?;
+        return self.try_gen_randoms_::<f64>(n);
+    }
+
+    #[inline]
+    fn try_gen_randoms_f32(&self, n: usize) -> ocl::Result<(Vec<f64>, Vec<f64>)> {
+        let (xs, ys) = self.try_gen_randoms_::<f32>(n)?;
+        let xs_ret = xs.par_iter().map(|&x| x as f64).collect();
+        let ys_ret = ys.par_iter().map(|&y| y as f64).collect();
+        return ocl::Result::Ok((xs_ret, ys_ret));
+    }
+
+    #[inline]
+    fn try_gen_randoms_<T: OclPrm + NumCast>(&self, n: usize) -> ocl::Result<(Vec<T>, Vec<T>)> {
+        let mut xs = vec![num::cast::<f64, T>(0.0).unwrap(); n];
+        let mut ys = xs.clone();
+        let buffer_xs = self.create_buffer::<T>(n,Some(&xs))?;
+        let buffer_ys = self.create_buffer::<T>(n,Some(&ys))?;
         let kernel = self.pro_que.kernel_builder("gen_randoms").arg(&buffer_xs).arg(&buffer_ys).build()?;
         let start_time = Instant::now();
         unsafe { kernel.enq()?; }
@@ -104,33 +119,6 @@ impl OpenCLThreadCalculator {
     }
 
     #[inline]
-    fn try_gen_randoms_f32(&self, n: usize) -> ocl::Result<(Vec<f64>, Vec<f64>)> {
-        let mut xs = vec![0.0; n];
-        let mut ys = vec![0.0; n];
-        let buffer_xs = self.pro_que.create_buffer::<f32>()?;
-        let buffer_ys = self.pro_que.create_buffer::<f32>()?;
-        let mut kernel_builder = self.pro_que.kernel_builder("gen_randoms");
-        let platform_name = self.pro_que.context().platform().unwrap().unwrap().name().unwrap();
-        if (platform_name.to_ascii_lowercase().contains("clvk")) {
-            // since it hasn't supported clGetKernelArgInfo and cl_khr_fp64 yet
-            unsafe { kernel_builder.disable_arg_type_check(); }
-            println!("disable_arg_type_check");
-        }
-        kernel_builder.arg(&buffer_xs).arg(&buffer_ys);
-        let kernel = kernel_builder.build()?;
-        let start_time = Instant::now();
-        unsafe { kernel.enq()?; }
-        self.pro_que.finish()?;
-        println!("kernel enqueue used: {}ms", start_time.elapsed().as_millis());
-        buffer_xs.read(&mut xs).enq()?;
-        buffer_ys.read(&mut ys).enq()?;
-        self.pro_que.finish()?;
-        let xs_ret = xs.par_iter().map(|&x| x as f64).collect();
-        let ys_ret = ys.par_iter().map(|&y| y as f64).collect();
-        return ocl::Result::Ok((xs_ret, ys_ret));
-    }
-
-    #[inline]
     fn try_cal(&self, xs: &Arc<Vec<f64>>, ys: &Arc<Vec<f64>>, n: usize) -> ocl::Result<u64> {
         if (self.use_f32) {
             return self.try_cal_f32(xs, ys, n);
@@ -140,9 +128,11 @@ impl OpenCLThreadCalculator {
     }
 
     #[inline]
-    fn try_cal_<T: OclPrm>(&self, buffer_xs: Buffer<T>, buffer_ys: Buffer<T>, n: usize) -> ocl::Result<u64> {
-        let buffer_dummy = Buffer::<u64>::builder().queue(self.pro_que.queue().clone()).len(1).build()?;
-        let buffer_work_group_size = Buffer::<u64>::builder().queue(self.pro_que.queue().clone()).len(1).build()?;
+    fn try_cal_<T: OclPrm>(&self, xs: &Vec<T>, ys: &Vec<T>, n: usize) -> ocl::Result<u64> {
+        let buffer_xs = self.create_buffer::<T>(n, Some(xs))?;
+        let buffer_ys = self.create_buffer::<T>(n, Some(ys))?;
+        let buffer_dummy = self.create_buffer::<u64>(1, None)?;
+        let buffer_work_group_size = self.create_buffer::<u64>(1, None)?;
         let kernel = self.pro_que.kernel_builder("cal").arg(&buffer_xs).arg(&buffer_ys).arg(&buffer_dummy).arg_local::<u64>(n).arg(&buffer_work_group_size).build()?;
 
         // this `work_group_size` doesn't necessarily equal to local_size (see below)
@@ -155,7 +145,7 @@ impl OpenCLThreadCalculator {
             }
         };
         println!("work_group_size = {}", work_group_size);
-        let buffer_partial_count = Buffer::<u64>::builder().queue(self.pro_que.queue().clone()).len(n).build()?;
+        let buffer_partial_count = self.create_buffer::<u64>(n, None)?;
         kernel.set_arg(2, &buffer_partial_count)?;
         unsafe { clSetKernelArg(kernel.as_ptr(), 3, mem::size_of::<u64>() * work_group_size, null()); }
         unsafe { kernel.enq()?; }
@@ -172,6 +162,31 @@ impl OpenCLThreadCalculator {
         let mut partial_count = vec![0 as u64; partial_count_len];
         buffer_partial_count.read(&mut partial_count).enq()?;
         self.pro_que.finish()?;
+
+        // multi-thread isn't better here
+        /*
+        let partial_count = Arc::new(partial_count);
+        let cnt = Arc::new(Mutex::new(0 as u64));
+        let thread_count = num_cpus::get();
+        let mut thread_handlers = Vec::new();
+        let len = ((partial_count_len as f64) / (thread_count as f64)).ceil() as usize;
+        for thread_index in 0..thread_count {
+            let cnt = cnt.clone();
+            let partial_count = partial_count.clone();
+            thread_handlers.push(thread::spawn(move || {
+                let mut lcnt: u64 = 0;
+                for i in len * thread_index..min(len * (thread_index + 1), partial_count_len) {
+                    lcnt += partial_count[i];
+                }
+                *(cnt.lock().unwrap()) += lcnt;
+            }));
+        } //
+        for handler in thread_handlers {
+            handler.join().expect("thread handler join() failed!");
+        }
+        let ret = *(cnt.lock().unwrap());
+         */
+
         let mut ret = 0;
         for x in partial_count {
             ret += x;
@@ -183,16 +198,33 @@ impl OpenCLThreadCalculator {
     fn try_cal_f32(&self, xs: &Arc<Vec<f64>>, ys: &Arc<Vec<f64>>, n: usize) -> ocl::Result<u64> {
         let xs: Vec<f32> = xs.par_iter().map(|&x| x as f32).collect();
         let ys: Vec<f32> = ys.par_iter().map(|&y| y as f32).collect();
-        let buffer_xs = Buffer::<f32>::builder().queue(self.pro_que.queue().clone()).flags(MEM_READ_ONLY).len(n).copy_host_slice(&xs).build()?;
-        let buffer_ys = Buffer::<f32>::builder().queue(self.pro_que.queue().clone()).flags(MEM_READ_ONLY).len(n).copy_host_slice(&ys).build()?;
-        return self.try_cal_::<f32>(buffer_xs, buffer_ys, n);
+        return self.try_cal_::<f32>(&xs, &ys, n);
     }
 
     #[inline]
     fn try_cal_f64(&self, xs: &Arc<Vec<f64>>, ys: &Arc<Vec<f64>>, n: usize) -> ocl::Result<u64> {
-        let buffer_xs = Buffer::<f64>::builder().queue(self.pro_que.queue().clone()).flags(MEM_READ_ONLY).len(n).copy_host_slice(&xs).build()?;
-        let buffer_ys = Buffer::<f64>::builder().queue(self.pro_que.queue().clone()).flags(MEM_READ_ONLY).len(n).copy_host_slice(&ys).build()?;
-        return self.try_cal_::<f64>(buffer_xs, buffer_ys, n);
+        return self.try_cal_::<f64>(xs, ys, n);
+    }
+
+    #[inline]
+    fn create_buffer<T: OclPrm>(&self, len: usize, orig_val: Option<&[T]>) -> ocl::Result<Buffer<T>> {
+        let mut buffer_builder = Buffer::<T>::builder().queue(self.pro_que.queue().clone()).len(len);
+        match orig_val {
+            Some(val) => {
+                if (self.is_unified_memory) {
+                    unsafe { buffer_builder = buffer_builder.use_host_slice(val); }
+                } else {
+                    buffer_builder = buffer_builder.copy_host_slice(val);
+                }
+            }
+            None => {
+                if (self.is_unified_memory) {
+                    // this is even worse ??
+                    // buffer_builder = buffer_builder.flags(MemFlags::ALLOC_HOST_PTR);
+                }
+            }
+        }
+        return buffer_builder.build();
     }
 }
 
@@ -215,9 +247,18 @@ impl MonteCarloPiCalculator for OpenCLThreadCalculator {
         let mut program_builder = ProgramBuilder::new();
         program_builder.src(src).cmplr_opt("");
         let pro_que = ProQue::builder().platform(platform).device(device_spec).prog_bldr(program_builder).dims(n).build().expect("Build OpenCL kernel failed!");
+
+        let is_unified_memory;
+        if let DeviceInfoResult::HostUnifiedMemory(b) = pro_que.context().device_info(0, DeviceInfo::HostUnifiedMemory).unwrap() {
+            is_unified_memory = b;
+        } else {
+            is_unified_memory = false;
+        }
+
         return OpenCLThreadCalculator {
             pro_que,
             use_f32,
+            is_unified_memory,
         };
     }
 

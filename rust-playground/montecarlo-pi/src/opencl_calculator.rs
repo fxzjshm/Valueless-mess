@@ -49,20 +49,21 @@ static KERNEL_SRC: &'static str = r#"
     }
 
     // reference: https://github.com/maoshouse/OpenCL-reduction-sum/blob/master/sum.cl
-    __kernel void cal(__global real* const xs, __global real* const ys, __global unsigned long long* output, __local unsigned long long* reductionSums) {
-        const int global_id = get_global_id(0),
+    __kernel void cal(__global real* const xs, __global real* const ys, __global unsigned long* output, __local unsigned long* reductionSums) {
+        const size_t global_id = get_global_id(0),
+                  /* global_size = get_global_size(0), */
                      local_id = get_local_id(0),
                      local_size = get_local_size(0),
                      work_group_id = global_id / local_size;
         real x = xs[global_id], y = ys[global_id];
-        unsigned long long is_inside = (sqrt(x * x + y * y) > (real) 1.0) ? 1 : 0;
+        unsigned long is_inside = (sqrt(x * x + y * y) < (real) 1.0) ? 1 : 0;
         reductionSums[local_id] = is_inside;
 
-        for (int offset = local_size / 2; offset > 0; offset /= 2) {
-		    barrier(CLK_LOCAL_MEM_FENCE);	// wait for all other work-items to finish previous iteration.
-		    if (local_id < offset) {
-		    	reductionSums[local_id] += reductionSums[local_id + offset];
-		    }
+        for (size_t offset = local_size >> 1; offset > 0; offset >>= 1) {
+            barrier(CLK_LOCAL_MEM_FENCE);
+            if (local_id < offset){
+                reductionSums[local_id] += reductionSums[local_id + offset];
+            }
         }
 
         if (local_id == 0) {
@@ -142,16 +143,16 @@ impl OpenCLThreadCalculator {
         if let KernelWorkGroupInfoResult::WorkGroupSize(wg_size) = get_kernel_work_group_info(&kernel, self.pro_que.device(), KernelWorkGroupInfo::WorkGroupSize).unwrap() {
             work_group_size = wg_size;
         } else {
-            unreachable!();
+            work_group_size = n;
         }
-        let buffer_partial_count = Buffer::<u64>::builder().queue(self.pro_que.queue().clone()).len(work_group_size).build()?;
+        println!("[DEBUG] try_cal_f64(): work_group_size = {}", work_group_size);
+        let partial_count_len = (n as f64 / work_group_size as f64).ceil() as usize;
+        let buffer_partial_count = Buffer::<u64>::builder().queue(self.pro_que.queue().clone()).len(partial_count_len).build()?;
         kernel.set_arg(2, &buffer_partial_count)?;
         unsafe { clSetKernelArg(kernel.as_ptr(), 3, mem::size_of::<u64>() * work_group_size, null()); }
-        let start_time = Instant::now();
         unsafe { kernel.enq()?; }
         self.pro_que.finish()?;
-        println!("kernel enqueue used: {}ms", start_time.elapsed().as_millis());
-        let mut partial_count = vec![0 as u64; work_group_size];
+        let mut partial_count = vec![0 as u64; partial_count_len];
         buffer_partial_count.read(&mut partial_count).enq()?;
         self.pro_que.finish()?;
         let mut ret = 0;

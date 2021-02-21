@@ -31,9 +31,9 @@ static KERNEL_SRC: &'static str = r#"
 
 
     inline real gen_random(const real x){
-        const real base = 65536.0;
-        const real a = 3289579.0;
-        const real b = 90238493.0;
+        const real base = (real) 65536.0;
+        const real a = (real) 3289579.0;
+        const real b = (real) 90238493.0;
         __private const real t = fma(a, x, b) / base;
         return fmod(t, (real) 1.0);
     }
@@ -41,7 +41,7 @@ static KERNEL_SRC: &'static str = r#"
     __kernel void gen_randoms(__global real* const xs, __global real* const ys){
         const size_t i = get_global_id(0);
         const size_t n = get_global_size(0);
-        __private real t = gen_random(((real) i) / n);
+        __private real t = gen_random(((real) i) / (real) n);
         t = gen_random(t);
         t = gen_random(t);
         xs[i] = gen_random(t);

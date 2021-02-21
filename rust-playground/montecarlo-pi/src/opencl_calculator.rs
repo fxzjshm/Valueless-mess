@@ -171,7 +171,7 @@ impl OpenCLThreadCalculator {
 impl MonteCarloPiCalculator for OpenCLThreadCalculator {
     #[inline]
     fn new(n: usize) -> OpenCLThreadCalculator {
-        let platform = Platform::default();
+        let platform = *Platform::list().first().unwrap();
         let device = Device::first(platform).expect("No device found in default platform!");
         let device_spec = DeviceSpecifier::Single(device);
         let device_info = device.info(DeviceInfo::Extensions).expect("Cannot get device info");
@@ -184,7 +184,9 @@ impl MonteCarloPiCalculator for OpenCLThreadCalculator {
             println!("real -> f64 (double)");
         }
 
-        let pro_que = ProQue::builder().platform(platform).device(device_spec).src(src).dims(n).build().expect("Build OpenCL kernel failed!");
+        let mut program_builder = ProgramBuilder::new();
+        program_builder.src(src).cmplr_opt("");
+        let pro_que = ProQue::builder().platform(platform).device(device_spec).prog_bldr(program_builder).dims(n).build().expect("Build OpenCL kernel failed!");
         return OpenCLThreadCalculator {
             pro_que,
             use_f32,

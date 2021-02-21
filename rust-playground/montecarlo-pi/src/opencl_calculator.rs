@@ -3,8 +3,8 @@ extern crate ocl;
 use ocl::ProQue;
 use crate::MonteCarloPiCalculator;
 use std::sync::Arc;
-use self::ocl::core::{DeviceInfo, MEM_READ_ONLY, get_kernel_work_group_info, KernelWorkGroupInfo, MEM_READ_WRITE};
-use self::ocl::{Device, Platform, Buffer};
+use self::ocl::core::{DeviceInfo, MEM_READ_ONLY, get_kernel_work_group_info, KernelWorkGroupInfo};
+use self::ocl::{Device, Platform, Buffer, OclPrm};
 use self::ocl::builders::{DeviceSpecifier, ProgramBuilder};
 use rayon::prelude::*;
 use std::time::Instant;
@@ -128,9 +128,7 @@ impl OpenCLThreadCalculator {
     }
 
     #[inline]
-    fn try_cal_f64(&self, xs: &Arc<Vec<f64>>, ys: &Arc<Vec<f64>>, n: usize) -> ocl::Result<u64> {
-        let buffer_xs = Buffer::<f64>::builder().queue(self.pro_que.queue().clone()).flags(MEM_READ_ONLY).len(n).copy_host_slice(&xs).build()?;
-        let buffer_ys = Buffer::<f64>::builder().queue(self.pro_que.queue().clone()).flags(MEM_READ_ONLY).len(n).copy_host_slice(&ys).build()?;
+    fn try_cal_<T: OclPrm>(&self, buffer_xs: Buffer<T>, buffer_ys: Buffer<T>, n: usize) -> ocl::Result<u64> {
         let buffer_dummy = Buffer::<u64>::builder().queue(self.pro_que.queue().clone()).len(1).build()?;
         let kernel = self.pro_que.kernel_builder("cal").arg(&buffer_xs).arg(&buffer_ys).arg(&buffer_dummy).arg_local::<u64>(n).build()?;
         let work_group_size;
@@ -139,7 +137,7 @@ impl OpenCLThreadCalculator {
         } else {
             work_group_size = n;
         }
-        println!("[DEBUG] try_cal_f64(): work_group_size = {}", work_group_size);
+        println!("[DEBUG] try_cal_(): work_group_size = {}", work_group_size);
         let partial_count_len = (n as f64 / work_group_size as f64).ceil() as usize;
         let buffer_partial_count = Buffer::<u64>::builder().queue(self.pro_que.queue().clone()).len(partial_count_len).build()?;
         kernel.set_arg(2, &buffer_partial_count)?;
@@ -158,7 +156,18 @@ impl OpenCLThreadCalculator {
 
     #[inline]
     fn try_cal_f32(&self, xs: &Arc<Vec<f64>>, ys: &Arc<Vec<f64>>, n: usize) -> ocl::Result<u64> {
-        unimplemented!();
+        let xs: Vec<f32> = xs.par_iter().map(|&x| x as f32).collect();
+        let ys: Vec<f32> = ys.par_iter().map(|&y| y as f32).collect();
+        let buffer_xs = Buffer::<f32>::builder().queue(self.pro_que.queue().clone()).flags(MEM_READ_ONLY).len(n).copy_host_slice(&xs).build()?;
+        let buffer_ys = Buffer::<f32>::builder().queue(self.pro_que.queue().clone()).flags(MEM_READ_ONLY).len(n).copy_host_slice(&ys).build()?;
+        return self.try_cal_::<f32>(buffer_xs, buffer_ys, n);
+    }
+
+    #[inline]
+    fn try_cal_f64(&self, xs: &Arc<Vec<f64>>, ys: &Arc<Vec<f64>>, n: usize) -> ocl::Result<u64> {
+        let buffer_xs = Buffer::<f64>::builder().queue(self.pro_que.queue().clone()).flags(MEM_READ_ONLY).len(n).copy_host_slice(&xs).build()?;
+        let buffer_ys = Buffer::<f64>::builder().queue(self.pro_que.queue().clone()).flags(MEM_READ_ONLY).len(n).copy_host_slice(&ys).build()?;
+        return self.try_cal_::<f64>(buffer_xs, buffer_ys, n);
     }
 }
 

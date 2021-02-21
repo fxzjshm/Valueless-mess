@@ -3,7 +3,7 @@ extern crate ocl;
 use ocl::ProQue;
 use crate::MonteCarloPiCalculator;
 use std::sync::Arc;
-use self::ocl::core::{DeviceInfo, MEM_READ_ONLY, get_kernel_work_group_info, KernelWorkGroupInfo};
+use self::ocl::core::{DeviceInfo, MEM_READ_ONLY, get_kernel_work_group_info, KernelWorkGroupInfo, get_device_info, DeviceInfoResult, set_kernel_arg};
 use self::ocl::{Device, Platform, Buffer, OclPrm};
 use self::ocl::builders::{DeviceSpecifier, ProgramBuilder};
 use rayon::prelude::*;
@@ -49,12 +49,16 @@ static KERNEL_SRC: &'static str = r#"
     }
 
     // reference: https://github.com/maoshouse/OpenCL-reduction-sum/blob/master/sum.cl
-    __kernel void cal(__global real* const xs, __global real* const ys, __global unsigned long* output, __local unsigned long* reductionSums) {
+    __kernel void cal(__global real* const xs, __global real* const ys, __global unsigned long* output,
+                      __local unsigned long* reductionSums, __global unsigned long* work_group_size) {
         const size_t global_id = get_global_id(0),
-                  /* global_size = get_global_size(0), */
+                     global_size = get_global_size(0),
                      local_id = get_local_id(0),
                      local_size = get_local_size(0),
                      work_group_id = global_id / local_size;
+        if (global_id == 0) {
+            work_group_size[0] = local_size;
+        }
         real x = xs[global_id], y = ys[global_id];
         unsigned long is_inside = (sqrt(x * x + y * y) < (real) 1.0) ? 1 : 0;
         reductionSums[local_id] = is_inside;
@@ -105,7 +109,15 @@ impl OpenCLThreadCalculator {
         let mut ys = vec![0.0; n];
         let buffer_xs = self.pro_que.create_buffer::<f32>()?;
         let buffer_ys = self.pro_que.create_buffer::<f32>()?;
-        let kernel = self.pro_que.kernel_builder("gen_randoms").arg(&buffer_xs).arg(&buffer_ys).build()?;
+        let mut kernel_builder = self.pro_que.kernel_builder("gen_randoms");
+        let platform_name = self.pro_que.context().platform().unwrap().unwrap().name().unwrap();
+        if (platform_name.to_ascii_lowercase().contains("clvk")) {
+            // since it hasn't supported clGetKernelArgInfo and cl_khr_fp64 yet
+            unsafe { kernel_builder.disable_arg_type_check(); }
+            println!("disable_arg_type_check");
+        }
+        kernel_builder.arg(&buffer_xs).arg(&buffer_ys);
+        let kernel = kernel_builder.build()?;
         let start_time = Instant::now();
         unsafe { kernel.enq()?; }
         self.pro_que.finish()?;
@@ -130,20 +142,33 @@ impl OpenCLThreadCalculator {
     #[inline]
     fn try_cal_<T: OclPrm>(&self, buffer_xs: Buffer<T>, buffer_ys: Buffer<T>, n: usize) -> ocl::Result<u64> {
         let buffer_dummy = Buffer::<u64>::builder().queue(self.pro_que.queue().clone()).len(1).build()?;
-        let kernel = self.pro_que.kernel_builder("cal").arg(&buffer_xs).arg(&buffer_ys).arg(&buffer_dummy).arg_local::<u64>(n).build()?;
-        let work_group_size;
-        if let KernelWorkGroupInfoResult::WorkGroupSize(wg_size) = get_kernel_work_group_info(&kernel, self.pro_que.device(), KernelWorkGroupInfo::WorkGroupSize).unwrap() {
-            work_group_size = wg_size;
-        } else {
-            work_group_size = n;
-        }
-        println!("[DEBUG] try_cal_(): work_group_size = {}", work_group_size);
-        let partial_count_len = (n as f64 / work_group_size as f64).ceil() as usize;
-        let buffer_partial_count = Buffer::<u64>::builder().queue(self.pro_que.queue().clone()).len(partial_count_len).build()?;
+        let buffer_work_group_size = Buffer::<u64>::builder().queue(self.pro_que.queue().clone()).len(1).build()?;
+        let kernel = self.pro_que.kernel_builder("cal").arg(&buffer_xs).arg(&buffer_ys).arg(&buffer_dummy).arg_local::<u64>(n).arg(&buffer_work_group_size).build()?;
+
+        // this `work_group_size` doesn't necessarily equal to local_size (see below)
+        // for memory allocation, so bigger is better (maybe)
+        let mut work_group_size = match get_kernel_work_group_info(&kernel, self.pro_que.device(), KernelWorkGroupInfo::WorkGroupSize) {
+            Ok(KernelWorkGroupInfoResult::WorkGroupSize(wg_size)) => wg_size,
+            _ => match get_device_info(self.pro_que.device(), DeviceInfo::MaxWorkGroupSize) {
+                Ok(DeviceInfoResult::MaxWorkGroupSize(size)) => size,
+                _ => n
+            }
+        };
+        println!("work_group_size = {}", work_group_size);
+        let buffer_partial_count = Buffer::<u64>::builder().queue(self.pro_que.queue().clone()).len(n).build()?;
         kernel.set_arg(2, &buffer_partial_count)?;
         unsafe { clSetKernelArg(kernel.as_ptr(), 3, mem::size_of::<u64>() * work_group_size, null()); }
         unsafe { kernel.enq()?; }
         self.pro_que.finish()?;
+
+        // read local_size as work_group_size because some platforms return max value when requesting CL_KERNEL_WORK_GROUP_SIZE
+        let mut vec_work_group_size = vec![work_group_size as u64];
+        buffer_work_group_size.read(&mut vec_work_group_size).enq()?;
+        self.pro_que.finish()?;
+        work_group_size = vec_work_group_size[0] as usize;
+        println!("work_group_size = local_size = {}", work_group_size);
+        let partial_count_len = (n as f64 / work_group_size as f64).ceil() as usize;
+        println!("partial_count_len = {}", partial_count_len);
         let mut partial_count = vec![0 as u64; partial_count_len];
         buffer_partial_count.read(&mut partial_count).enq()?;
         self.pro_que.finish()?;

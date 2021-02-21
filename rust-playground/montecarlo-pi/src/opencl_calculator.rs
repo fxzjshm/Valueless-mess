@@ -113,14 +113,8 @@ impl OpenCLThreadCalculator {
         buffer_xs.read(&mut xs).enq()?;
         buffer_ys.read(&mut ys).enq()?;
         self.pro_que.finish()?;
-        let mut xs_ret = vec![0.0; n];
-        xs_ret.par_iter_mut().enumerate().for_each(|(i, val)| {
-            *val = xs[i] as f64;
-        });
-        let mut ys_ret = vec![0.0; n];
-        ys_ret.par_iter_mut().enumerate().for_each(|(i, val)| {
-            *val = ys[i] as f64;
-        });
+        let xs_ret = xs.par_iter().map(|&x| x as f64).collect();
+        let ys_ret = ys.par_iter().map(|&y| y as f64).collect();
         return ocl::Result::Ok((xs_ret, ys_ret));
     }
 

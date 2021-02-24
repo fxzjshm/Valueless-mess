@@ -3,7 +3,7 @@ extern crate ocl;
 use ocl::ProQue;
 use crate::MonteCarloPiCalculator;
 use std::sync::Arc;
-use self::ocl::core::{DeviceInfo, MEM_READ_ONLY, get_kernel_work_group_info, KernelWorkGroupInfo, get_device_info, DeviceInfoResult, set_kernel_arg};
+use self::ocl::core::{DeviceInfo, get_kernel_work_group_info, KernelWorkGroupInfo, get_device_info, DeviceInfoResult};
 use self::ocl::{Device, Platform, Buffer, OclPrm};
 use self::ocl::builders::{DeviceSpecifier, ProgramBuilder};
 use rayon::prelude::*;

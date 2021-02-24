@@ -1,3 +1,5 @@
+#![allow(unused_parens)]
+
 mod distribution;
 mod single_thread_calculator;
 mod multi_thread_calculator;

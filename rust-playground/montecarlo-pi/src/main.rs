@@ -4,6 +4,7 @@ mod distribution;
 mod single_thread_calculator;
 mod multi_thread_calculator;
 mod opencl_calculator;
+mod plot;
 
 use std::time::Instant;
 use crate::distribution::{check_dist, print_vec};
@@ -12,6 +13,8 @@ use crate::multi_thread_calculator::MultiThreadCalculator;
 use crate::single_thread_calculator::SingleThreadCalculator;
 use crate::opencl_calculator::OpenCLThreadCalculator;
 use num::Float;
+use std::cmp::min;
+use crate::plot::{Env, Plot};
 // use rayon::ThreadPool;
 
 // static cpu_thread_pool: ThreadPool = rayon::ThreadPoolBuilder::new().num_threads(num_cpus::get()).build().unwrap();
@@ -33,6 +36,22 @@ fn main() {
 
     print_vec(&check_dist(&xs, 0.0, 1.0 + f64::epsilon(), 10));
     print_vec(&check_dist(&ys, 0.0, 1.0 + f64::epsilon(), 10));
+
+    // take first `m` points out and draw them
+    let m = min(100000, xs.len());
+    let xs = xs.split_at(m).0.to_vec();
+    let ys = ys.split_at(m).0.to_vec();
+
+    let env = Env::new();
+    let plot = Plot::new(&env);
+    plot.figure(1);
+    plot.scatter::<f64, f64>(&xs, &ys);
+    plot.figure(2);
+    plot.hist(&xs);
+    plot.figure(3);
+    plot.hist(&ys);
+    plot.draw();
+    plot.show();
 }
 
 #[inline]

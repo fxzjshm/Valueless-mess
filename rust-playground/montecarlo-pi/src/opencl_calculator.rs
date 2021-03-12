@@ -3,8 +3,8 @@ extern crate ocl;
 use ocl::ProQue;
 use crate::MonteCarloPiCalculator;
 use std::sync::Arc;
-use self::ocl::core::{DeviceInfo, get_kernel_work_group_info, KernelWorkGroupInfo, get_device_info, DeviceInfoResult};
-use self::ocl::{Device, Platform, Buffer, OclPrm};
+use self::ocl::core::{DeviceInfo, get_kernel_work_group_info, KernelWorkGroupInfo, get_device_info, DeviceInfoResult, ProgramBuildInfo, ProgramBuildInfoResult};
+use self::ocl::{Device, Platform, Buffer, OclPrm, MemFlags};
 use self::ocl::builders::{DeviceSpecifier, ProgramBuilder};
 use rayon::prelude::*;
 use std::time::Instant;
@@ -105,8 +105,8 @@ impl OpenCLThreadCalculator {
     fn try_gen_randoms_<T: OclPrm + NumCast>(&self, n: usize) -> ocl::Result<(Vec<T>, Vec<T>)> {
         let mut xs = vec![num::cast::<f64, T>(0.0).unwrap(); n];
         let mut ys = xs.clone();
-        let buffer_xs = self.create_buffer::<T>(n,Some(&xs))?;
-        let buffer_ys = self.create_buffer::<T>(n,Some(&ys))?;
+        let buffer_xs = self.create_buffer::<T>(n, Some(&xs), MemFlags::WRITE_ONLY)?;
+        let buffer_ys = self.create_buffer::<T>(n, Some(&ys), MemFlags::WRITE_ONLY)?;
         let kernel = self.pro_que.kernel_builder("gen_randoms").arg(&buffer_xs).arg(&buffer_ys).build()?;
         let start_time = Instant::now();
         unsafe { kernel.enq()?; }
@@ -129,10 +129,10 @@ impl OpenCLThreadCalculator {
 
     #[inline]
     fn try_cal_<T: OclPrm>(&self, xs: &Vec<T>, ys: &Vec<T>, n: usize) -> ocl::Result<u64> {
-        let buffer_xs = self.create_buffer::<T>(n, Some(xs))?;
-        let buffer_ys = self.create_buffer::<T>(n, Some(ys))?;
-        let buffer_dummy = self.create_buffer::<u64>(1, None)?;
-        let buffer_work_group_size = self.create_buffer::<u64>(1, None)?;
+        let buffer_xs = self.create_buffer::<T>(n, Some(xs), MemFlags::READ_ONLY)?;
+        let buffer_ys = self.create_buffer::<T>(n, Some(ys), MemFlags::READ_ONLY)?;
+        let buffer_dummy = self.create_buffer::<u64>(1, None, MemFlags::default())?;
+        let buffer_work_group_size = self.create_buffer::<u64>(1, None, MemFlags::WRITE_ONLY)?;
         let kernel = self.pro_que.kernel_builder("cal").arg(&buffer_xs).arg(&buffer_ys).arg(&buffer_dummy).arg_local::<u64>(n).arg(&buffer_work_group_size).build()?;
 
         // this `work_group_size` doesn't necessarily equal to local_size (see below)
@@ -145,7 +145,7 @@ impl OpenCLThreadCalculator {
             }
         };
         println!("work_group_size = {}", work_group_size);
-        let buffer_partial_count = self.create_buffer::<u64>(n, None)?;
+        let buffer_partial_count = self.create_buffer::<u64>(n, None, MemFlags::WRITE_ONLY)?;
         kernel.set_arg(2, &buffer_partial_count)?;
         unsafe { clSetKernelArg(kernel.as_ptr(), 3, mem::size_of::<u64>() * work_group_size, null()); }
         unsafe { kernel.enq()?; }
@@ -207,20 +207,25 @@ impl OpenCLThreadCalculator {
     }
 
     #[inline]
-    fn create_buffer<T: OclPrm>(&self, len: usize, orig_val: Option<&[T]>) -> ocl::Result<Buffer<T>> {
+    fn create_buffer<T: OclPrm>(&self, len: usize, orig_val: Option<&[T]>, memflags: MemFlags) -> ocl::Result<Buffer<T>> {
         let mut buffer_builder = Buffer::<T>::builder().queue(self.pro_que.queue().clone()).len(len);
-        match orig_val {
-            Some(val) => {
-                if (self.is_unified_memory) {
-                    unsafe { buffer_builder = buffer_builder.use_host_slice(val); }
-                } else {
-                    buffer_builder = buffer_builder.copy_host_slice(val);
+
+        buffer_builder = buffer_builder.flags(memflags);
+        if (memflags & (MemFlags::ALLOC_HOST_PTR | MemFlags::USE_HOST_PTR | MemFlags::COPY_HOST_PTR) == MemFlags::from_bits(0).unwrap()) {
+            match orig_val {
+                Some(val) => {
+                    if (self.is_unified_memory) {
+                        unsafe { buffer_builder = buffer_builder.use_host_slice(val); }
+                    } else {
+                        buffer_builder = buffer_builder.flags(MemFlags::ALLOC_HOST_PTR);
+                        buffer_builder = buffer_builder.copy_host_slice(val);
+                    }
                 }
-            }
-            None => {
-                if (self.is_unified_memory) {
-                    // this is even worse ??
-                    // buffer_builder = buffer_builder.flags(MemFlags::ALLOC_HOST_PTR);
+                None => {
+                    if (self.is_unified_memory) {
+                        // this is even worse ??
+                        // buffer_builder = buffer_builder.flags(MemFlags::ALLOC_HOST_PTR);
+                    }
                 }
             }
         }
@@ -232,7 +237,7 @@ impl MonteCarloPiCalculator for OpenCLThreadCalculator {
     #[inline]
     fn new(n: usize) -> OpenCLThreadCalculator {
         let platform = *Platform::list().first().unwrap();
-        let device = Device::first(platform).expect("No device found in default platform!");
+        let device = Device::by_idx_wrap(platform, 0).expect("No device found in default platform!");
         let device_spec = DeviceSpecifier::Single(device);
         let device_info = device.info(DeviceInfo::Extensions).expect("Cannot get device info");
         let use_f32 = (device_info.to_string().find("cl_khr_fp64") == None);
@@ -243,10 +248,14 @@ impl MonteCarloPiCalculator for OpenCLThreadCalculator {
         } else {
             println!("real -> f64 (double)");
         }
+        println!("[DEBUG] Platform: {}, Device: {}", platform.name().unwrap(), device.name().unwrap());
 
         let mut program_builder = ProgramBuilder::new();
         program_builder.src(src).cmplr_opt("");
         let pro_que = ProQue::builder().platform(platform).device(device_spec).prog_bldr(program_builder).dims(n).build().expect("Build OpenCL kernel failed!");
+        if let ProgramBuildInfoResult::BuildLog(log) = pro_que.program().build_info(device, ProgramBuildInfo::BuildLog).unwrap() {
+            println!("[DEBUG] build log:\n{}", log);
+        }
 
         let is_unified_memory;
         if let DeviceInfoResult::HostUnifiedMemory(b) = pro_que.context().device_info(0, DeviceInfo::HostUnifiedMemory).unwrap() {

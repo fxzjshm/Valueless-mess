@@ -3,12 +3,12 @@ extern crate ocl;
 use ocl::ProQue;
 use crate::MonteCarloPiCalculator;
 use std::sync::Arc;
-use self::ocl::core::{DeviceInfo, get_kernel_work_group_info, KernelWorkGroupInfo, get_device_info, DeviceInfoResult, ProgramBuildInfo, ProgramBuildInfoResult};
+use self::ocl::core::{DeviceInfo, get_kernel_work_group_info, KernelWorkGroupInfo, get_device_info, DeviceInfoResult, ProgramBuildInfo, ProgramBuildInfoResult, get_platform_info, PlatformInfo};
 use self::ocl::{Device, Platform, Buffer, OclPrm, MemFlags};
 use self::ocl::builders::{DeviceSpecifier, ProgramBuilder};
 use rayon::prelude::*;
 use std::time::Instant;
-use self::ocl::enums::KernelWorkGroupInfoResult;
+use self::ocl::enums::{KernelWorkGroupInfoResult, PlatformInfoResult};
 use core::mem;
 use self::ocl::core::ffi::clSetKernelArg;
 use std::ptr::null;
@@ -57,11 +57,21 @@ static KERNEL_SRC: &'static str = r#"
                      global_size = get_global_size(0),
                      local_id = get_local_id(0),
                      local_size = get_local_size(0),
-                     work_group_id = global_id / local_size;
+                     work_group_id = get_group_id(0);
         if (global_id == 0) {
             work_group_size[0] = local_size;
         }
+
+#ifdef CLVK
         real x = xs[global_id], y = ys[global_id];
+#else
+        __local real xs_local[MAX_WORK_GROUP_SIZE], ys_local[MAX_WORK_GROUP_SIZE];
+        async_work_group_copy(xs_local, xs + work_group_id * local_size, local_size, 0);
+        async_work_group_copy(ys_local, ys + work_group_id * local_size, local_size, 0);
+        barrier(CLK_LOCAL_MEM_FENCE);
+        real x = xs_local[local_id], y = ys_local[local_id];
+#endif
+
         unsigned long is_inside = (sqrt(x * x + y * y) < (real) 1.0) ? 1 : 0;
         reductionSums[local_id] = is_inside;
 
@@ -252,6 +262,23 @@ impl MonteCarloPiCalculator for OpenCLThreadCalculator {
 
         let mut program_builder = ProgramBuilder::new();
         program_builder.src(src).cmplr_opt("");
+
+        match get_device_info(device, DeviceInfo::MaxWorkGroupSize) {
+            Ok(DeviceInfoResult::MaxWorkGroupSize(size)) => {
+                program_builder.cmplr_def("MAX_WORK_GROUP_SIZE", size as i32);
+            },
+            _ => unreachable!()
+        }
+
+        match get_platform_info(platform,PlatformInfo::Name){
+            Ok(PlatformInfoResult::Name(name))=>{
+                if(name.eq_ignore_ascii_case("clvk")){
+                    program_builder.cmplr_def("CLVK", 1);
+                }
+            }
+            _=>{}
+        }
+
         let pro_que = ProQue::builder().platform(platform).device(device_spec).prog_bldr(program_builder).dims(n).build().expect("Build OpenCL kernel failed!");
         if let ProgramBuildInfoResult::BuildLog(log) = pro_que.program().build_info(device, ProgramBuildInfo::BuildLog).unwrap() {
             println!("[DEBUG] build log:\n{}", log);

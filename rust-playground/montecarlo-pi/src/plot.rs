@@ -3,7 +3,6 @@
 // Original License: MIT License
 
 use cpython::{Python, ToPyObject};
-use cpython::ObjectProtocol;
 //for call method
 use cpython::{PyModule, PyTuple};
 

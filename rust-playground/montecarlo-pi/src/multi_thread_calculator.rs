@@ -13,14 +13,18 @@ impl MultiThreadCalculator {
         let mut ys = vec![0.0; n];
 
         xs.par_iter_mut().enumerate().for_each(|(i, val)| {
-            let t = gen_random(i as f64 / n as f64);
-            let t = gen_random(t);
-            let t = gen_random(t);
-            *val = gen_random(t);
+            let mut t = gen_random(i as f64 / n as f64);
+            t = gen_random(t);
+            t = gen_random(t);
+            *val = t;
         });
 
         ys.par_iter_mut().enumerate().for_each(|(i, val)| {
-            *val = gen_random(xs[i]);
+            let mut t = xs[i];
+            for _ in 0..10 {
+                t = gen_random(t);
+            }
+            *val = t;
         });
 
         return (xs, ys);

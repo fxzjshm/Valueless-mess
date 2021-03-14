@@ -20,7 +20,7 @@ use crate::plot::{Env, Plot};
 // static cpu_thread_pool: ThreadPool = rayon::ThreadPoolBuilder::new().num_threads(num_cpus::get()).build().unwrap();
 
 fn main() {
-    let n = 100000000;
+    let n = 1000000;
 
     let implement = OpenCLThreadCalculator::new(n);
     let start_time = Instant::now();

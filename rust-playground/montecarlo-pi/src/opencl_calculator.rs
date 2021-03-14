@@ -46,8 +46,13 @@ static KERNEL_SRC: &'static str = r#"
         __private real t = gen_random(((real) i) / (real) n);
         t = gen_random(t);
         t = gen_random(t);
-        xs[i] = gen_random(t);
-        ys[i] = gen_random(xs[i]);
+        xs[i] = t;
+
+        #pragma unroll
+        for (int k = 0; k < 10; k++){
+            t = gen_random(t);
+        }
+        ys[i] = t;
     }
 
     // reference: https://github.com/maoshouse/OpenCL-reduction-sum/blob/master/sum.cl

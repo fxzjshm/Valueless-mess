@@ -57,14 +57,14 @@ static KERNEL_SRC: &'static str = r#"
 
     // reference: https://github.com/maoshouse/OpenCL-reduction-sum/blob/master/sum.cl
     __kernel void cal(__global real* const xs, __global real* const ys, __global unsigned long* output,
-                      __local unsigned long* reductionSums, __global unsigned long* work_group_size) {
+                      __local unsigned long* reductionSums, __global unsigned long* num_groups) {
         const size_t global_id = get_global_id(0),
                      global_size = get_global_size(0),
                      local_id = get_local_id(0),
                      local_size = get_local_size(0),
                      work_group_id = get_group_id(0);
         if (global_id == 0) {
-            work_group_size[0] = local_size;
+            num_groups[0] = get_num_groups(0);
         }
 
 #ifdef CLVK
@@ -147,8 +147,8 @@ impl OpenCLThreadCalculator {
         let buffer_xs = self.create_buffer::<T>(n, Some(xs), MemFlags::READ_ONLY)?;
         let buffer_ys = self.create_buffer::<T>(n, Some(ys), MemFlags::READ_ONLY)?;
         let buffer_dummy = self.create_buffer::<u64>(1, None, MemFlags::default())?;
-        let buffer_work_group_size = self.create_buffer::<u64>(1, None, MemFlags::WRITE_ONLY)?;
-        let kernel = self.pro_que.kernel_builder("cal").arg(&buffer_xs).arg(&buffer_ys).arg(&buffer_dummy).arg_local::<u64>(n).arg(&buffer_work_group_size).build()?;
+        let buffer_num_groups = self.create_buffer::<u64>(1, None, MemFlags::WRITE_ONLY)?;
+        let kernel = self.pro_que.kernel_builder("cal").arg(&buffer_xs).arg(&buffer_ys).arg(&buffer_dummy).arg_local::<u64>(n).arg(&buffer_num_groups).build()?;
 
         // this `work_group_size` doesn't necessarily equal to local_size (see below)
         // for memory allocation, so bigger is better (maybe)
@@ -167,13 +167,11 @@ impl OpenCLThreadCalculator {
         self.pro_que.finish()?;
 
         // read local_size as work_group_size because some platforms return max value when requesting CL_KERNEL_WORK_GROUP_SIZE
-        let mut vec_work_group_size = vec![work_group_size as u64];
-        buffer_work_group_size.read(&mut vec_work_group_size).enq()?;
+        let mut vec_num_groups = vec![0];
+        buffer_num_groups.read(&mut vec_num_groups).enq()?;
         self.pro_que.finish()?;
-        work_group_size = vec_work_group_size[0] as usize;
-        println!("work_group_size = local_size = {}", work_group_size);
-        let partial_count_len = (n as f64 / work_group_size as f64).ceil() as usize;
-        println!("partial_count_len = {}", partial_count_len);
+        let partial_count_len = vec_num_groups[0] as usize;
+        println!("partial_count_len = num_groups = {}", partial_count_len);
         let mut partial_count = vec![0 as u64; partial_count_len];
         buffer_partial_count.read(&mut partial_count).enq()?;
         self.pro_que.finish()?;
@@ -251,7 +249,7 @@ impl OpenCLThreadCalculator {
 impl MonteCarloPiCalculator for OpenCLThreadCalculator {
     #[inline]
     fn new(n: usize) -> OpenCLThreadCalculator {
-        let platform = *Platform::list().first().unwrap();
+        let platform = Platform::list()[0];
         let device = Device::by_idx_wrap(platform, 0).expect("No device found in default platform!");
         let device_spec = DeviceSpecifier::Single(device);
         let device_info = device.info(DeviceInfo::Extensions).expect("Cannot get device info");

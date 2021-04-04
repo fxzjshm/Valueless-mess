@@ -1,3 +1,14 @@
 cl_platform_id = 1
-cl_device_id = 0
+cl_device_id = 1
 cl_compile_arguments = ""
+
+window_width = 640
+window_height = 480
+
+# all values below should be measured under SI
+# maybe I can do that
+lx = 0.1 # m
+ly = 0.1 # m
+lz = 0.1 # m
+dt = 1e-7 # s
+T = 300 # K

@@ -2,17 +2,18 @@ use ocl::*;
 use ocl::builders::*;
 use ocl::enums::*;
 use crate::CONFIG;
+use ocl::core::ffi::c_void;
 
 pub struct OpenCLCalculator {
     pro_que: ProQue,
     use_f32: bool,
     is_unified_memory: bool,
+    use_gl_interop: bool,
 }
 
 impl OpenCLCalculator {
     #[inline]
-    pub fn new(n: usize, src: String) -> OpenCLCalculator {
-
+    pub fn new(n: usize, src: String, gl_handle: Option<*mut c_void>) -> OpenCLCalculator {
         let platform = Platform::list()[CONFIG.cl_platform_id];
 
         let device = Device::by_idx_wrap(platform, CONFIG.cl_device_id).expect("No device found in default platform!");
@@ -20,11 +21,14 @@ impl OpenCLCalculator {
         let device_info = device.info(DeviceInfo::Extensions).expect("Cannot get device info");
         let use_f32 = (device_info.to_string().find("cl_khr_fp64") == None);
 
-        let context = Context::builder()
-            .properties(ocl_interop::get_properties_list().platform(platform))
+        let mut context_builder = Context::builder();
+        context_builder.properties(ocl_interop::get_properties_list().platform(platform))
             .platform(platform)
-            .devices(device_spec)
-            .build().unwrap();
+            .devices(device_spec);
+        if let Some(handle) = gl_handle {
+            context_builder.gl_context(handle);
+        }
+        let context = context_builder.build().unwrap();
 
         let mut program_builder = ProgramBuilder::new();
         if (use_f32) {
@@ -51,6 +55,7 @@ impl OpenCLCalculator {
             pro_que,
             use_f32,
             is_unified_memory,
+            use_gl_interop: false,
         };
     }
 

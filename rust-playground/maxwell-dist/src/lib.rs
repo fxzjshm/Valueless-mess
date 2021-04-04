@@ -1,6 +1,6 @@
 #![allow(unused_parens)]
 
-pub mod cl_util;
+pub mod opencl_calculator;
 pub mod config;
 pub mod util;
 

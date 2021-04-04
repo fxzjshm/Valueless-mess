@@ -1,0 +1,3 @@
+cl_platform_id = 1
+cl_device_id = 0
+cl_compile_arguments = ""

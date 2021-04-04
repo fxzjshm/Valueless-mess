@@ -1,7 +1,7 @@
 extern crate ocl;
 
 use ocl::ProQue;
-use crate::MonteCarloPiCalculator;
+use crate::{MonteCarloPiCalculator, CONFIG};
 use std::sync::Arc;
 use self::ocl::core::{DeviceInfo, get_kernel_work_group_info, KernelWorkGroupInfo, get_device_info, DeviceInfoResult, ProgramBuildInfo, ProgramBuildInfoResult, get_platform_info, PlatformInfo};
 use self::ocl::{Device, Platform, Buffer, OclPrm, MemFlags};
@@ -152,7 +152,7 @@ impl OpenCLThreadCalculator {
 
         // this `work_group_size` doesn't necessarily equal to local_size (see below)
         // for memory allocation, so bigger is better (maybe)
-        let mut work_group_size = match get_kernel_work_group_info(&kernel, self.pro_que.device(), KernelWorkGroupInfo::WorkGroupSize) {
+        let work_group_size = match get_kernel_work_group_info(&kernel, self.pro_que.device(), KernelWorkGroupInfo::WorkGroupSize) {
             Ok(KernelWorkGroupInfoResult::WorkGroupSize(wg_size)) => wg_size,
             _ => match get_device_info(self.pro_que.device(), DeviceInfo::MaxWorkGroupSize) {
                 Ok(DeviceInfoResult::MaxWorkGroupSize(size)) => size,
@@ -249,37 +249,38 @@ impl OpenCLThreadCalculator {
 impl MonteCarloPiCalculator for OpenCLThreadCalculator {
     #[inline]
     fn new(n: usize) -> OpenCLThreadCalculator {
-        let platform = Platform::list()[0];
-        let device = Device::by_idx_wrap(platform, 0).expect("No device found in default platform!");
+        let platform = Platform::list()[CONFIG.cl_platform_id];
+        let device = Device::by_idx_wrap(platform, CONFIG.cl_device_id).expect("No device found in default platform!");
         let device_spec = DeviceSpecifier::Single(device);
         let device_info = device.info(DeviceInfo::Extensions).expect("Cannot get device info");
-        let use_f32 = (device_info.to_string().find("cl_khr_fp64") == None);
-        let mut src = String::new() + KERNEL_SRC;
+        let use_f32 = CONFIG.use_f32 || (device_info.to_string().find("cl_khr_fp64") == None);
+        let src = String::new() + KERNEL_SRC;
+        println!("[DEBUG] Platform: {}, Device: {}", platform.name().unwrap(), device.name().unwrap());
+
+        let mut program_builder = ProgramBuilder::new();
+        program_builder.src(src).cmplr_opt(&CONFIG.cl_compile_arguments);
+
         if (use_f32) {
-            src = (String::new() + "#define REAL float\n" + KERNEL_SRC);
+            program_builder.cmplr_opt("-D REAL=float");
             println!("real -> f32 (float)");
         } else {
             println!("real -> f64 (double)");
         }
-        println!("[DEBUG] Platform: {}, Device: {}", platform.name().unwrap(), device.name().unwrap());
-
-        let mut program_builder = ProgramBuilder::new();
-        program_builder.src(src).cmplr_opt("");
 
         match get_device_info(device, DeviceInfo::MaxWorkGroupSize) {
             Ok(DeviceInfoResult::MaxWorkGroupSize(size)) => {
                 program_builder.cmplr_def("MAX_WORK_GROUP_SIZE", size as i32);
-            },
+            }
             _ => unreachable!()
         }
 
-        match get_platform_info(platform,PlatformInfo::Name){
-            Ok(PlatformInfoResult::Name(name))=>{
-                if(name.eq_ignore_ascii_case("clvk")){
+        match get_platform_info(platform, PlatformInfo::Name) {
+            Ok(PlatformInfoResult::Name(name)) => {
+                if (name.eq_ignore_ascii_case("clvk")) {
                     program_builder.cmplr_def("CLVK", 1);
                 }
             }
-            _=>{}
+            _ => {}
         }
 
         let pro_que = ProQue::builder().platform(platform).device(device_spec).prog_bldr(program_builder).dims(n).build().expect("Build OpenCL kernel failed!");

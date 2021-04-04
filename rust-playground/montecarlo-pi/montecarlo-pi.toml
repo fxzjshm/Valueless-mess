@@ -1,0 +1,6 @@
+n = 1000000
+cl_platform_id = 0
+cl_device_id = 0
+use_f32 = false
+m = 100000
+cl_compile_arguments = ""

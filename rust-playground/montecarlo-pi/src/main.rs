@@ -5,6 +5,7 @@ mod single_thread_calculator;
 mod multi_thread_calculator;
 mod opencl_calculator;
 mod plot;
+mod config;
 
 use std::time::Instant;
 use crate::distribution::{check_dist, print_vec};
@@ -15,12 +16,18 @@ use crate::opencl_calculator::OpenCLThreadCalculator;
 use num::Float;
 use std::cmp::min;
 use crate::plot::{Env, Plot};
+use crate::config::MontecarloPiConfig;
+use lazy_static::lazy_static;
 // use rayon::ThreadPool;
 
 // static cpu_thread_pool: ThreadPool = rayon::ThreadPoolBuilder::new().num_threads(num_cpus::get()).build().unwrap();
 
+lazy_static! {
+    pub static ref CONFIG: MontecarloPiConfig = MontecarloPiConfig::new("montecarlo-pi.toml");
+}
+
 fn main() {
-    let n = 1000000;
+    let n = CONFIG.n;
 
     let implement = OpenCLThreadCalculator::new(n);
     let start_time = Instant::now();
@@ -38,7 +45,7 @@ fn main() {
     print_vec(&check_dist(&ys, 0.0, 1.0 + f64::epsilon(), 10));
 
     // take first `m` points out and draw them
-    let m = min(100000, xs.len());
+    let m = min(CONFIG.m, xs.len());
     let xs = xs.split_at(m).0.to_vec();
     let ys = ys.split_at(m).0.to_vec();
 

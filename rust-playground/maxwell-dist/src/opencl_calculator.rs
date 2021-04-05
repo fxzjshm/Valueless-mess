@@ -12,13 +12,20 @@ pub struct OpenCLCalculator {
 impl OpenCLCalculator {
     #[inline]
     pub fn new(n: usize, src: String) -> OpenCLCalculator {
-
         let platform = Platform::list()[CONFIG.cl_platform_id];
 
-        let device = Device::by_idx_wrap(platform, CONFIG.cl_device_id).expect("No device found in default platform!");
+        let device = Device::by_idx_wrap(platform, CONFIG.cl_device_id).expect(&format!("[ERROR] No device {} found in platform {}", CONFIG.cl_device_id, CONFIG.cl_platform_id));
         let device_spec = DeviceSpecifier::Single(device);
-        let device_info = device.info(DeviceInfo::Extensions).expect("Cannot get device info");
-        let use_f32 = (device_info.to_string().find("cl_khr_fp64") == None);
+        let mut use_f32 = CONFIG.use_f32;
+        match device.info(DeviceInfo::Extensions) {
+            Ok(device_info)=>{
+                use_f32 = use_f32 || (device_info.to_string().find("cl_khr_fp64") == None);
+            }
+            Err(e)=>{
+                println!("[WARN] Cannot get device info of device {} in platform {}, Error: {}",
+                         CONFIG.cl_device_id, CONFIG.cl_platform_id, e);
+            }
+        }
 
         let context = Context::builder()
             .properties(ocl_interop::get_properties_list().platform(platform))

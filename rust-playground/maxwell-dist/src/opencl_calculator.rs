@@ -1,34 +1,36 @@
 use ocl::*;
 use ocl::builders::*;
 use ocl::enums::*;
+use ocl::core;
 use crate::CONFIG;
 
 pub struct OpenCLCalculator {
-    pro_que: ProQue,
-    use_f32: bool,
-    is_unified_memory: bool,
+    pub n: usize,
+    pub pro_que: ProQue,
+    pub use_f32: bool,
+    pub is_unified_memory: bool,
 }
 
 impl OpenCLCalculator {
     #[inline]
-    pub fn new(n: usize, src: String) -> OpenCLCalculator {
+    pub fn new(n: usize, src: Vec<String>) -> OpenCLCalculator {
         let platform = Platform::list()[CONFIG.cl_platform_id];
 
         let device = Device::by_idx_wrap(platform, CONFIG.cl_device_id).expect(&format!("[ERROR] No device {} found in platform {}", CONFIG.cl_device_id, CONFIG.cl_platform_id));
         let device_spec = DeviceSpecifier::Single(device);
         let mut use_f32 = CONFIG.use_f32;
         match device.info(DeviceInfo::Extensions) {
-            Ok(device_info)=>{
+            Ok(device_info) => {
                 use_f32 = use_f32 || (device_info.to_string().find("cl_khr_fp64") == None);
             }
-            Err(e)=>{
+            Err(e) => {
                 println!("[WARN] Cannot get device info of device {} in platform {}, Error: {}",
                          CONFIG.cl_device_id, CONFIG.cl_platform_id, e);
             }
         }
 
         let context = Context::builder()
-            .properties(ocl_interop::get_properties_list().platform(platform))
+            // .properties(ocl_interop::get_properties_list().platform(platform))
             .platform(platform)
             .devices(device_spec)
             .build().unwrap();
@@ -41,8 +43,12 @@ impl OpenCLCalculator {
             println!("real -> f64 (double)");
         }
         println!("[DEBUG] Platform: {}, Device: {}", platform.name().unwrap(), device.name().unwrap());
-        program_builder.src(src).cmplr_opt("");
-        let pro_que = ProQue::builder().context(context).prog_bldr(program_builder).dims(n).build().expect("Build OpenCL kernel failed!");
+
+        for s in src {
+            program_builder.source(s);
+        }
+        program_builder.cmplr_opt("-I src/");
+        let pro_que = ProQue::builder().device(device).context(context).prog_bldr(program_builder).dims(n).build().expect("Build OpenCL kernel failed!");
         if let ProgramBuildInfoResult::BuildLog(log) = pro_que.program().build_info(device, ProgramBuildInfo::BuildLog).unwrap() {
             println!("[DEBUG] build log:\n{}", log);
         }
@@ -55,6 +61,7 @@ impl OpenCLCalculator {
         }
 
         return OpenCLCalculator {
+            n,
             pro_que,
             use_f32,
             is_unified_memory,
@@ -85,5 +92,23 @@ impl OpenCLCalculator {
             }
         }
         return buffer_builder.build();
+    }
+
+    #[inline]
+    pub fn enqueue_kernel(&self, kernel: &ocl::core::Kernel) -> ocl::core::Result<()>{
+        unsafe {
+            core::enqueue_kernel::<(), ()>(self.pro_que.queue().as_core(),
+                                           kernel, 1, None,
+                                           &[self.n, 0, 0], None,
+                                           None, None)
+        }
+    }
+
+    #[inline]
+    pub fn enqueue_read_buffer<T: OclPrm, M: ocl::core::AsMem<T> + ocl::core::MemCmdRw>(&self, buffer: M, data: &mut [T]) ->  ocl::core::Result<()>{
+        unsafe {
+            core::enqueue_read_buffer::<T, M, (), ()>(self.pro_que.queue().as_core(), buffer,
+                                                      true, 0, data, None, None)
+        }
     }
 }

@@ -1,3 +1,18 @@
 cl_platform_id = 1
 cl_device_id = 0
 cl_compile_arguments = ""
+
+window_width = 640 # pixel
+window_height = 480 # pixel
+
+# all values below should be measured under SI
+# maybe I can do that
+n = 10000
+lx = 1e-8 # m
+ly = 1e-8 # m
+lz = 1e-8 # m
+dt = 1e-7 # s
+T = 300 # K
+r0 = 1e-10 # m
+m = 1.6606e-27 # kg
+g = [0, 0, 0] # kg * m / s^2

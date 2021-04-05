@@ -1,0 +1,2 @@
+pub static RELATIVE_ATOMIC_MASS: f64 = 1.6606e-27;
+pub static BOLTZMANN_CONSTANT: f64 = 1.380649e-23;

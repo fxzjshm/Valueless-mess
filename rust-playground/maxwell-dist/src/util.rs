@@ -1,7 +1,7 @@
 use std::fs::File;
 use std::io::Read;
 
-pub fn read_file(path: &str) -> String{
+pub fn read_file(path: &str) -> String {
     let mut s = String::new();
     match File::open(path) {
         Ok(mut file) => {

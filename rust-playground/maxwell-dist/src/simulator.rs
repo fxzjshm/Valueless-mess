@@ -36,7 +36,7 @@ impl Simulator {
 
         // kernel_gen_randoms3s_with_boundary, kernel_gen_r
         let kernel_gen_randoms3s_with_boundary = core::create_kernel(&program, "gen_randoms3s_with_boundary")?;
-        core::set_kernel_arg(&kernel_gen_randoms3s_with_boundary, 0, ArgVal::mem(&buffer_r));
+        core::set_kernel_arg(&kernel_gen_randoms3s_with_boundary, 0, ArgVal::mem(&buffer_r))?;
         if (calculator.use_f32) {
             core::set_kernel_arg(&kernel_gen_randoms3s_with_boundary, 1, ArgVal::vector(&Float3::new(CONFIG.lx as f32, CONFIG.ly as f32, CONFIG.lz as f32)))?;
         } else {
@@ -83,10 +83,10 @@ impl Simulator {
     }
 
     pub fn randomize(&self) {
-        self.calculator.enqueue_kernel(&self.kernel_gen_r);
-        core::finish(&self.calculator.pro_que.as_core());
-        self.calculator.enqueue_kernel(&self.kernel_gen_v);
-        core::finish(&self.calculator.pro_que.as_core());
+        self.calculator.enqueue_kernel(&self.kernel_gen_r).unwrap();
+        core::finish(&self.calculator.pro_que.as_core()).unwrap();
+        self.calculator.enqueue_kernel(&self.kernel_gen_v).unwrap();
+        core::finish(&self.calculator.pro_que.as_core()).unwrap();
     }
 }
 

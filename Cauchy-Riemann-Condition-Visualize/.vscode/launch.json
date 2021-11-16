@@ -1,0 +1,31 @@
+{
+    // 使用 IntelliSense 了解相关属性。 
+    // 悬停以查看现有属性的描述。
+    // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: 当前文件",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Preview manim", // manim 预览
+            "type": "python",
+            "request": "launch",
+            "cwd": "${workspaceFolder}", // 设置当前工作路径
+            "env":{
+                // "PYTHONPATH": "${workspaceFolder}/manim" // 设置Python运行环境变量
+            },
+            "program": "/usr/local/bin/manimgl", // 设置运行程序
+            "console": "integratedTerminal", // 使用vsc内置终端
+            "args": [
+                "${file}", // 当前文件路径
+                "--config_file", // 配置文件参数
+                "${workspaceFolder}/custom_config.yml" // 配置文件路径
+            ]
+        }
+    ]
+}

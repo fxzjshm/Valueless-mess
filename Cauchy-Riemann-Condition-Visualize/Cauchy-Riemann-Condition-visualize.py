@@ -4,7 +4,7 @@ from manimlib import *
 c_grid_len = FRAME_WIDTH # /3
 c_grid_range = [-10, 10, 1]
 buff = 0 # FRAME_WIDTH/10
-animation_time = 2
+animation_time = 1
 interval_time = 0.5
 arrow_max_tip_length_to_length_ratio = 0.25
 arrow_stroke_width = 2
@@ -30,7 +30,7 @@ class CR_Visualize_left_side(Scene):
         base_dot = Dot(base_point)
 
         self.play(
-            Write(c_grid, run_time=animation_time),
+            Write(c_grid, run_time=2*animation_time),
         )
         self.wait(interval_time)
 
@@ -38,35 +38,42 @@ class CR_Visualize_left_side(Scene):
             Write(base_dot, run_time=animation_time),
         )
         self.wait(interval_time)
+        
+        ## sync point 1 - write coordinate
+        ## 3 t1 + 2 t2 used
+        ## (t1 = animation_time, t2 = interval_time)
 
-        # dx, dy and their arrows
+        # dx, dy
         dx_point = c_grid.coords_to_point(base_point_x + dx, base_point_y)
         dy_point = c_grid.coords_to_point(base_point_x, base_point_y + dy)
         dx_dot = Dot(dx_point, color=GREEN)
-        dx_dot.scale(dot_scale)
         dy_dot = Dot(dy_point, color=RED)
-        dy_dot.scale(dot_scale)
-        v_dx = Arrow(start=base_point, end=dx_point, buff=0, stroke_color=GREEN, stroke_width = arrow_stroke_width, max_tip_length_to_length_ratio=arrow_max_tip_length_to_length_ratio)
-        v_dy = Arrow(start=base_point, end=dy_point, buff=0, stroke_color=RED, stroke_width = arrow_stroke_width, max_tip_length_to_length_ratio=arrow_max_tip_length_to_length_ratio)
-
+        
         self.play(
-            Write(v_dx),
             Write(dx_dot),
             run_time=animation_time
         )
         self.wait(interval_time)
 
         self.play(
-            Write(v_dy),
             Write(dy_dot),
             run_time=animation_time
         )
         self.wait(interval_time)
 
+        ## sync point 2 - dx and dy drawn
+        ## 2 t1 + 2 t2
 
-        # shift and zoom in
+        # the other scene is being transformed, so just wait
+        self.wait(4*animation_time)
+        self.wait(interval_time)
+
+        ## sync point 3 - transformation applied
+        ## 4 t1 + t2
+
+        # shift the camera and zoom in
         frame = self.camera.frame
-        base_elements = VGroup(c_grid, base_dot, v_dx, v_dy, dx_dot, dy_dot)
+        base_elements = VGroup(c_grid, base_dot, dx_dot, dy_dot)
         self.play(
             base_elements.animate.shift(-base_point),
             run_time=animation_time
@@ -76,34 +83,81 @@ class CR_Visualize_left_side(Scene):
         self.play(
             frame.animate.set_height(frame_scale),
             base_dot.animate.scale(dot_scale),
+            dx_dot.animate.scale(dot_scale),
+            dy_dot.animate.scale(dot_scale),
             run_time=animation_time
         )
         self.wait(interval_time)
 
-        # labels
+        ## sync point 4 - camera shifted and zoomed
+        # 2 t1 + 2 t2
+
+        # arrows and labels
         base_point = base_dot.get_center()
+        dx_point = dx_dot.get_center()
+        dy_point = dy_dot.get_center()
+        v_dx = Arrow(start=base_point, end=dx_point, buff=0, stroke_color=GREEN, stroke_width = arrow_stroke_width, max_tip_length_to_length_ratio=arrow_max_tip_length_to_length_ratio)
+        v_dy = Arrow(start=base_point, end=dy_point, buff=0, stroke_color=RED, stroke_width = arrow_stroke_width, max_tip_length_to_length_ratio=arrow_max_tip_length_to_length_ratio)
         v_dx_label = TexText("$\Delta x$")
         v_dx_label.scale(frame_scale * text_scale)
-        v_dx_label.next_to(v_dx.end, DOWN*(frame_scale * text_scale))
+        v_dx_label.next_to(dx_point, DOWN*(frame_scale * text_scale))
         v_dx_label.set_color(GREEN)
         v_dy_label = TexText("$\Delta y$")
         v_dy_label.scale(frame_scale * text_scale)
-        v_dy_label.next_to(v_dy.end, LEFT*(frame_scale * text_scale))
+        v_dy_label.next_to(dy_point, LEFT*(frame_scale * text_scale))
         v_dy_label.set_color(RED)
 
         self.play(
+            Write(v_dx),
             Write(v_dx_label),
             run_time=animation_time
         )
         self.wait(interval_time)
 
         self.play(
+            Write(v_dy),
             Write(v_dy_label),
             run_time=animation_time
         )
         self.wait(interval_time)
 
+        ## sync point 5 - vectors and labels
+        # 2 t1 + 2 t2
+
+        # moving dot
+        moving_dot = Dot(base_point, color=YELLOW)
+        moving_dot.scale(0.5*dot_scale)
+        self.play(
+            FadeIn(moving_dot),
+            run_time=0.5*animation_time
+        )
+        self.play(
+            moving_dot.animate.move_to(dx_point),
+            run_time=animation_time
+        )
+        self.play(
+            FadeOut(moving_dot),
+            run_time=0.5*animation_time
+        )
         self.wait(interval_time)
+
+        moving_dot.move_to(base_point)
+        self.play(
+            FadeIn(moving_dot),
+            run_time=0.5*animation_time
+        )
+        self.play(
+            moving_dot.animate.move_to(dy_point),
+            run_time=animation_time
+        )
+        self.play(
+            FadeOut(moving_dot),
+            run_time=0.5*animation_time
+        )
+        self.wait(interval_time)
+
+        ## sync point 6 - moving point
+        # 4 t1 + 2 t2
 
 #########################################################################################
 
@@ -123,7 +177,7 @@ class CR_Visualize_right_side(Scene):
         base_dot = SmallDot(base_point)
 
         self.play(
-            Write(moving_c_grid, run_time=animation_time),
+            Write(moving_c_grid, run_time=2*animation_time),
         )
         self.wait(interval_time)
 
@@ -132,7 +186,10 @@ class CR_Visualize_right_side(Scene):
         )
         self.wait(interval_time)
 
-        # dx, dy and their arrows
+        ## sync point 1 - write coordinate
+        ## 3 t1 + 2 t2 used
+
+        # dx, dy
         dx_point = moving_c_grid.coords_to_point(base_point_x + dx, base_point_y)
         dy_point = moving_c_grid.coords_to_point(base_point_x, base_point_y + dy)
         dx_dot = SmallDot(dx_point, color=GREEN)
@@ -150,24 +207,21 @@ class CR_Visualize_right_side(Scene):
         )
         self.wait(interval_time)
 
+        ## sync point 2 - dx and dy drawn
+        ## 2 t1 + 2 t2
+
         # group altogether to apply transformation
         base_elements = VGroup(moving_c_grid, base_dot, dx_dot, dy_dot)
         
         # core transformation
         self.play(
             base_elements.animate.apply_complex_function(lambda z: z**2),
-            run_time=animation_time,
+            run_time=4*animation_time,
         )
         self.wait(interval_time)
 
-        # scale to normal size
-        self.play(
-            base_dot.animate.scale(dot_scale),
-            dx_dot.animate.scale(dot_scale),
-            dy_dot.animate.scale(dot_scale),
-            run_time=animation_time,
-        )
-        self.wait(interval_time)
+        ## sync point 3 - transformation applied
+        # 4 t1 + t2
 
         # shift the camera and zoom in
         base_point = base_dot.get_center()
@@ -180,11 +234,17 @@ class CR_Visualize_right_side(Scene):
 
         self.play(
             frame.animate.set_height(frame_scale),
+            base_dot.animate.scale(dot_scale),
+            dx_dot.animate.scale(dot_scale),
+            dy_dot.animate.scale(dot_scale),
             run_time=animation_time
         )
         self.wait(interval_time)
 
-        # add labels
+        ## sync point 4 - camera shifted and zoomed
+        # 2 t1 + 2 t2
+
+        # arrows and labels
         base_point = base_dot.get_center()
         dx_point = dx_dot.get_center()
         dy_point = dy_dot.get_center()
@@ -213,6 +273,45 @@ class CR_Visualize_right_side(Scene):
         )
         self.wait(interval_time)
 
+        ## sync point 5 - vectors and labels
+        # 2 t1 + 2 t2
+
+        # moving dot
+        moving_dot = Dot(base_point, color=YELLOW)
+        moving_dot.scale(dot_scale)
+        self.play(
+            FadeIn(moving_dot),
+            run_time=0.5*animation_time
+        )
+        self.play(
+            moving_dot.animate.move_to(dx_point),
+            run_time=animation_time
+        )
+        self.play(
+            FadeOut(moving_dot),
+            run_time=0.5*animation_time
+        )
+        self.wait(interval_time)
+
+        moving_dot.move_to(base_point)
+        self.play(
+            FadeIn(moving_dot),
+            run_time=0.5*animation_time
+        )
+        self.play(
+            moving_dot.animate.move_to(dy_point),
+            run_time=animation_time
+        )
+        self.play(
+            FadeOut(moving_dot),
+            run_time=0.5*animation_time
+        )
+        self.wait(interval_time)
+
+        ## sync point 6 - moving point
+        # 4 t1 + 2 t2
+
+        # analyze u, v
         v_u_dx_point = [dx_point[0], base_point[1], 0.]
         v_u_dy_point = [dy_point[0], base_point[1], 0.]
         v_u_dx = Arrow(start=base_point, end=v_u_dx_point, buff=0, stroke_color=BLUE, stroke_width = arrow_stroke_width, max_tip_length_to_length_ratio=arrow_max_tip_length_to_length_ratio)

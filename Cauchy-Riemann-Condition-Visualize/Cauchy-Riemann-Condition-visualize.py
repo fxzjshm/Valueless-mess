@@ -1,4 +1,32 @@
-from typing_extensions import runtime
+# Cauchy-Riemann condition visualize
+#
+# Copyright (C) 2021 fxzjshm
+# 
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+# This project uses documention at https://docs.manim.org.cn/
+# many thanks to them
+
+# exported video is copyrighted
+
+# metadata modified from the template from https://stackoverflow.com/questions/1523427/what-is-the-common-header-format-of-python-files by Esteban Küber
+__author__ = "fxzjshm"
+__copyright__ = "Copyright (C) 2021 fxzjshm"
+__license__ = "GPL"
+__version__ = "v3 or later"
+__email__ = "fxzjshm@163.com"
+
 from manimlib import *
 
 # global parameters
@@ -632,6 +660,78 @@ class CR_Visualize_text(Scene):
         ## sync point 8 - explanation
         # 3 t1 + 10 t2
         debug_sync_dot(self)
+
+#########################################################################################
+
+class CR_Visualize_startup(Scene):
+    def construct(self):
+        title = TexText("Cauchy-Riemann 条件的直观理解")
+        info = Text("作者: fxzjshm")
+
+        title.scale(1.3)
+        title.center()
+        info.scale(0.5)
+        info.to_corner(RIGHT + DOWN)
+
+        self.play(
+            Write(title, run_time=animation_time),
+        )
+        self.wait(interval_time)
+        self.play(
+            Write(info, run_time=animation_time),
+        )
+        self.wait(6*interval_time)
+        self.play(
+            FadeOut(title),
+            FadeOut(info),
+            run_time=animation_time
+        )
+        self.wait(2*interval_time)
+
+class CR_Visualize_ending(Scene):
+    def construct(self):
+        notice = Text(
+            """
+            作者: fxzjshm\n
+            视频画面部分： Copyright (C) 2021 fxzjshm\n
+            \n
+            此视频仅限 Bilibili 发布。\n
+            需获得具有作者 GPG 签名的授权文件方可转载，原因见下。\n
+            \n
+            敬告盗视频者：\n
+            未经授权，不得以任何形式通过任何途径将此视频的任何部分转载至任何其他平台，\n
+            包括但不限于 抖音、快手、火山小视频、西瓜视频、优酷、爱奇艺、好看视频、\n
+            搜狐视频、腾讯视频、腾讯微视、腾讯企鹅号、微信视频号、梨视频、百家号、CSDN 等；\n
+            对于任何侵权行为，作者保留追究法律责任的权利。\n
+            \n
+            ------
+            \n
+            此视频的源代码以 GNU 通用公共许可证第 3 版或其后续版本授权。\n
+            此视频使用 Grant Sanderson “3Blue1Brown” 开发的 manim 引擎，\n
+            制作中参考了 manim-kindergarten 团队编写的 manim 教程，在此表示非常感谢。\n
+            \n
+            BGM: Foxtail-Grass Studio 歳月-雲流れ-
+            """,
+            font_size=16,
+            font="Noto Serif CJK SC",
+            stroke_width=0,
+            #t2c={'Blue':BLUE, 'Brown':GREY_BROWN},
+        )
+
+        # notice.scale(0.3)
+        notice.center()
+
+        self.play(
+            FadeIn(notice, run_time=0.5*animation_time),
+        )
+        self.wait(5*interval_time)
+        self.play(
+            #FadeOut(notice),
+            run_time=0.5*animation_time
+        )
+        self.wait(2*interval_time)
+
+#########################################################################################
 
 def debug_sync_dot(scene):
     if debug_sync:

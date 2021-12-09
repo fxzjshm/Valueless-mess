@@ -28,13 +28,14 @@ __version__ = "v3 or later"
 __email__ = "fxzjshm@163.com"
 
 from manimlib import *
+from numpy import cos, sin
 
 # global parameters
 c_grid_len = FRAME_WIDTH # /3
 c_grid_range = [-10, 10, 1]
 buff = 0 # FRAME_WIDTH/10
 animation_time = 1
-interval_time = 0.5
+interval_time = 0.8
 arrow_max_tip_length_to_length_ratio = 0.25
 arrow_stroke_width = 2
 
@@ -42,10 +43,12 @@ base_point_x = 1.
 base_point_y = 2.
 dx = 0.2
 dy = 0.2
+theta_1 = 0.666
+theta_2 = 2.333
 
 dx_color = GREEN
 dy_color = RED
-u_v_dx_color = BLUE
+u_v_dx_color = TEAL
 u_v_dy_color = ORANGE
 
 # for debugging sync
@@ -117,9 +120,10 @@ class CR_Visualize_left_side(Scene):
 
         # shift the camera and zoom in
         frame = self.camera.frame
-        base_elements = VGroup(c_grid, base_dot, dx_dot, dy_dot)
+        dots = VGroup(base_dot, dx_dot, dy_dot)
+        base_elements = VGroup(c_grid, dots)
         self.play(
-            base_elements.animate.shift(-base_point),
+            base_elements.animate.shift(-dots.get_center_of_mass()),
             run_time=animation_time
         )
         self.wait(interval_time)
@@ -211,11 +215,99 @@ class CR_Visualize_left_side(Scene):
         # 4 t1 + 4 t2
         debug_sync_dot(self)
 
-        self.wait(3*animation_time + 10*interval_time)
+        # explanation
+        v_rotate = v_dx.copy().set_color(WHITE)
+        rotate_angle = v_dy.get_angle() - v_dx.get_angle()
 
-        ## sync point 8 - explanation
-        # 3 t1 + 10 t2
+        self.wait(animation_time)
+        self.wait(2*interval_time)
+        self.play(FadeIn(v_rotate), run_time=interval_time)
+        self.play(Rotate(v_rotate, angle=rotate_angle, about_point=base_dot.get_center()), run_time=2*interval_time)
+        self.play(FadeOut(v_rotate), run_time=interval_time)
+        self.wait(2*interval_time)
+
+        self.wait(3*animation_time + 7*interval_time)
+
+        self.play(
+            FadeOut(v_dx),
+            FadeOut(v_dy),
+            FadeOut(dx_dot),
+            FadeOut(dy_dot),
+            FadeOut(v_dx_label),
+            FadeOut(v_dy_label),
+            run_time=interval_time
+        )
+
+        ## sync point 8 - explanation - 1
+        # 4 t1 + 16 t2
         debug_sync_dot(self)
+
+        # port to any two vectors
+        v1_point = base_point + (dx_point - base_point) * cos(theta_1) + (dy_point - base_point) * sin(theta_1)
+        v2_point = base_point + (dx_point - base_point) * cos(theta_2) + (dy_point - base_point) * sin(theta_2)
+        v_v1 = Arrow(start=base_point, end=v1_point, buff=0, stroke_color=dx_color, stroke_width = arrow_stroke_width, max_tip_length_to_length_ratio=arrow_max_tip_length_to_length_ratio)
+        v_v2 = Arrow(start=base_point, end=v2_point, buff=0, stroke_color=dy_color, stroke_width = arrow_stroke_width, max_tip_length_to_length_ratio=arrow_max_tip_length_to_length_ratio)
+        v_v1_label = TexText("$z_1$")
+        v_v1_label.scale(frame_scale * text_scale)
+        v_v1_label.next_to(v1_point, RIGHT*(frame_scale * text_scale))
+        v_v1_label.set_color(dx_color)
+        v_v2_label = TexText("$z_2$")
+        v_v2_label.scale(frame_scale * text_scale)
+        v_v2_label.next_to(v2_point, LEFT*(frame_scale * text_scale))
+        v_v2_label.set_color(dy_color)
+
+        self.play(
+            Write(v_v1),
+            Write(v_v1_label),
+            run_time=animation_time
+        )
+        self.wait(interval_time)
+        self.play(
+            Write(v_v2),
+            Write(v_v2_label),
+            run_time=animation_time
+        )
+        self.wait(3*interval_time)
+
+        ## sync point 9 - v1 and v2 drawn
+        # 2 t1 + 4 t2
+        debug_sync_dot(self)
+
+        self.wait(4*animation_time + 4*interval_time)
+
+        ## sync point 10 - analyze - 2
+        # 4 t1 + 4 t2
+        debug_sync_dot(self)
+
+        v_rotate = v_v1.copy().set_color(WHITE)
+        rotate_angle = (v_v2.get_angle() - v_v1.get_angle())
+
+        self.wait(animation_time)
+        self.wait(2*interval_time)
+        self.play(FadeIn(v_rotate), run_time=interval_time)
+        self.play(Rotate(v_rotate, angle=rotate_angle, about_point=base_dot.get_center()), run_time=2*interval_time)
+        self.play(FadeOut(v_rotate), run_time=interval_time)
+        self.wait(2*interval_time)
+
+        self.wait(1*animation_time + 8*interval_time)
+
+        ## sync point 11 - explanation - 2
+        # 2 t1 + 16 t2
+        debug_sync_dot(self)
+
+        self.play(
+            FadeOut(v_v1),
+            FadeOut(v_v2),
+            FadeOut(v_v1_label),
+            FadeOut(v_v2_label),
+            run_time=interval_time
+        )
+
+        self.play(
+            FadeOut(c_grid),
+            FadeOut(base_dot),
+            run_time=interval_time
+        )
 
 #########################################################################################
 
@@ -274,7 +366,8 @@ class CR_Visualize_right_side(Scene):
         debug_sync_dot(self)
 
         # group altogether to apply transformation
-        base_elements = VGroup(moving_c_grid, base_dot, dx_dot, dy_dot)
+        dots = VGroup(base_dot, dx_dot, dy_dot)
+        base_elements = VGroup(moving_c_grid, dots)
         
         # core transformation
         self.play(
@@ -291,7 +384,7 @@ class CR_Visualize_right_side(Scene):
         base_point = base_dot.get_center()
         frame = self.camera.frame
         self.play(
-            base_elements.animate.shift(-base_point),
+            base_elements.animate.shift(-dots.get_center_of_mass()),
             run_time=animation_time
         )
         self.wait(interval_time)
@@ -445,11 +538,191 @@ class CR_Visualize_right_side(Scene):
         # 4 t1 + 4 t2
         debug_sync_dot(self)
 
-        self.wait(3*animation_time + 10*interval_time)
+        # explanation
+        v_rotate = v_dx.copy().set_color(WHITE)
+        rotate_angle = v_dy.get_angle() - v_dx.get_angle()
 
-        ## sync point 8 - explanation
-        # 3 t1 + 10 t2
+        self.wait(animation_time)
+        self.wait(2*interval_time)
+        self.play(FadeIn(v_rotate), run_time=interval_time)
+        self.play(Rotate(v_rotate, angle=rotate_angle, about_point=base_dot.get_center()), run_time=2*interval_time)
+        self.play(FadeOut(v_rotate), run_time=interval_time)
+        self.wait(2*interval_time)
+
+        self.wait(3*animation_time + 7*interval_time)
+
+        self.play(
+            FadeOut(v_dx),
+            FadeOut(v_dy),
+            FadeOut(dx_dot),
+            FadeOut(dy_dot),
+            FadeOut(v_dx_label),
+            FadeOut(v_dy_label),
+
+            FadeOut(v_u_dx),
+            FadeOut(v_u_dx_line),
+            FadeOut(v_u_dx_label),
+
+            FadeOut(v_u_dy),
+            FadeOut(v_u_dy_line),
+            FadeOut(v_u_dy_label),
+
+            FadeOut(v_v_dx),
+            FadeOut(v_v_dx_line),
+            FadeOut(v_v_dx_label),
+
+            FadeOut(v_v_dy),
+            FadeOut(v_v_dy_line),
+            FadeOut(v_v_dy_label),
+            run_time=interval_time
+        )
+
+        ## sync point 8 - explanation - 1
+        # 4 t1 + 16 t2
         debug_sync_dot(self)
+
+        # port to any two vectors
+        v1_point = base_point + (dx_point - base_point) * cos(theta_1) + (dy_point - base_point) * sin(theta_1)
+        v2_point = base_point + (dx_point - base_point) * cos(theta_2) + (dy_point - base_point) * sin(theta_2)
+        v_v1 = Arrow(start=base_point, end=v1_point, buff=0, stroke_color=dx_color, stroke_width = arrow_stroke_width, max_tip_length_to_length_ratio=arrow_max_tip_length_to_length_ratio)
+        v_v2 = Arrow(start=base_point, end=v2_point, buff=0, stroke_color=dy_color, stroke_width = arrow_stroke_width, max_tip_length_to_length_ratio=arrow_max_tip_length_to_length_ratio)
+        v_v1_label = TexText("$\Delta{z_1} f$")
+        v_v1_label.scale(frame_scale * text_scale)
+        v_v1_label.next_to(v1_point, LEFT*(frame_scale * text_scale))
+        v_v1_label.set_color(dx_color)
+        v_v2_label = TexText("$\Delta{z_2} f$")
+        v_v2_label.scale(frame_scale * text_scale)
+        v_v2_label.next_to(v2_point, LEFT*(frame_scale * text_scale))
+        v_v2_label.set_color(dy_color)
+
+        self.play(
+            Write(v_v1),
+            Write(v_v1_label),
+            run_time=animation_time
+        )
+        self.wait(interval_time)
+        self.play(
+            Write(v_v2),
+            Write(v_v2_label),
+            run_time=animation_time
+        )
+        self.wait(3*interval_time)
+
+        ## sync point 9 - v1 and v2 drawn
+        # 2 t1 + 4 t2
+        debug_sync_dot(self)
+
+        v_u_v1_point = [v1_point[0], base_point[1], 0.]
+        v_u_v2_point = [v2_point[0], base_point[1], 0.]
+        v_u_v1 = Arrow(start=base_point, end=v_u_v1_point, buff=0, stroke_color=u_v_dx_color, stroke_width = arrow_stroke_width, max_tip_length_to_length_ratio=arrow_max_tip_length_to_length_ratio)
+        v_u_v2 = Arrow(start=base_point, end=v_u_v2_point, buff=0, stroke_color=u_v_dy_color, stroke_width = arrow_stroke_width, max_tip_length_to_length_ratio=arrow_max_tip_length_to_length_ratio)
+        v_u_v1_label = TexText("$\Delta_{z_1} u$")
+        v_u_v1_label.scale(frame_scale * text_scale)
+        v_u_v1_label.next_to(v_u_v1_point, UL*(frame_scale * text_scale))
+        v_u_v1_label.set_color(u_v_dx_color)
+        v_u_v2_label = TexText("$\Delta_{z_2} u$")
+        v_u_v2_label.scale(frame_scale * text_scale)
+        v_u_v2_label.next_to(v_u_v2_point, LEFT*(frame_scale * text_scale))
+        v_u_v2_label.set_color(u_v_dy_color)
+        v_u_v1_line = DashedLine(start=v_u_v1_point, end=v1_point, stroke_color=u_v_dx_color, stroke_width = arrow_stroke_width/3)
+        v_u_v2_line = DashedLine(start=v_u_v2_point, end=v2_point, stroke_color=u_v_dy_color, stroke_width = arrow_stroke_width/3)
+
+        self.play(
+            Write(v_u_v1),
+            Write(v_u_v1_line),
+            Write(v_u_v1_label),
+            run_time=animation_time
+        )
+        self.wait(interval_time)
+
+        self.play(
+            Write(v_u_v2),
+            Write(v_u_v2_line),
+            Write(v_u_v2_label),
+            run_time=animation_time
+        )
+        self.wait(interval_time)
+
+        v_v_v1_point = [base_point[0], v1_point[1], 0.]
+        v_v_v2_point = [base_point[0], v2_point[1], 0.]
+        v_v_v1 = Arrow(start=base_point, end=v_v_v1_point, buff=0, stroke_color=u_v_dx_color, stroke_width = arrow_stroke_width, max_tip_length_to_length_ratio=arrow_max_tip_length_to_length_ratio)
+        v_v_v2 = Arrow(start=base_point, end=v_v_v2_point, buff=0, stroke_color=u_v_dy_color, stroke_width = arrow_stroke_width, max_tip_length_to_length_ratio=arrow_max_tip_length_to_length_ratio)
+        v_v_v1_label = TexText("$\Delta_{z_1} v$")
+        v_v_v1_label.scale(frame_scale * text_scale)
+        v_v_v1_label.next_to(v_v_v1_point, RIGHT*(frame_scale * text_scale))
+        v_v_v1_label.set_color(u_v_dx_color)
+        v_v_v2_label = TexText("$\Delta_{z_2} v$")
+        v_v_v2_label.scale(frame_scale * text_scale)
+        v_v_v2_label.next_to(v_v_v2_point, DOWN*(frame_scale * text_scale))
+        v_v_v2_label.set_color(u_v_dy_color)
+        v_v_v1_line = DashedLine(start=v_v_v1_point, end=v1_point, stroke_color=u_v_dx_color, stroke_width = arrow_stroke_width/3)
+        v_v_v2_line = DashedLine(start=v_v_v2_point, end=v2_point, stroke_color=u_v_dy_color, stroke_width = arrow_stroke_width/3)
+
+        self.play(
+            Write(v_v_v1),
+            Write(v_v_v1_line),
+            Write(v_v_v1_label),
+            run_time=animation_time
+        )
+        self.wait(interval_time)
+
+        self.play(
+            Write(v_v_v2),
+            Write(v_v_v2_line),
+            Write(v_v_v2_label),
+            run_time=animation_time
+        )
+        self.wait(interval_time)
+
+        ## sync point 10 - analyze - 2
+        # 4 t1 + 4 t2
+        debug_sync_dot(self)
+
+        v_rotate = v_v1.copy().set_color(WHITE)
+        rotate_angle = (v_v2.get_angle() - v_v1.get_angle()) + 2*PI
+
+        self.wait(animation_time)
+        self.wait(2*interval_time)
+        self.play(FadeIn(v_rotate), run_time=interval_time)
+        self.play(Rotate(v_rotate, angle=rotate_angle, about_point=base_dot.get_center()), run_time=2*interval_time)
+        self.play(FadeOut(v_rotate), run_time=interval_time)
+        self.wait(2*interval_time)
+
+        self.wait(1*animation_time + 8*interval_time)
+
+        ## sync point 11 - explanation - 2
+        # 2 t1 + 16 t2
+        debug_sync_dot(self)
+
+        self.play(
+            FadeOut(v_v1),
+            FadeOut(v_v2),
+            FadeOut(v_v1_label),
+            FadeOut(v_v2_label),
+
+            FadeOut(v_u_v1),
+            FadeOut(v_u_v1_line),
+            FadeOut(v_u_v1_label),
+
+            FadeOut(v_u_v2),
+            FadeOut(v_u_v2_line),
+            FadeOut(v_u_v2_label),
+
+            FadeOut(v_v_v1),
+            FadeOut(v_v_v1_line),
+            FadeOut(v_v_v1_label),
+
+            FadeOut(v_v_v2),
+            FadeOut(v_v_v2_line),
+            FadeOut(v_v_v2_label),
+            run_time=interval_time
+        )
+
+        self.play(
+            FadeOut(moving_c_grid),
+            FadeOut(base_dot),
+            run_time=interval_time
+        )
 
 #########################################################################################
 
@@ -458,7 +731,7 @@ class CR_Visualize_text(Scene):
         text_scale = 1
 
         self.wait(2*animation_time)
-        self.wait(interval_time)
+        #self.wait(interval_time)
 
         # base point
         text_base_point = Text("在复平面上取一点")
@@ -583,13 +856,12 @@ class CR_Visualize_text(Scene):
         self.play(
             Write(group_analyze, run_time=animation_time),
         )
-        self.wait(2*interval_time)
+        self.wait(3*animation_time + 2*interval_time)
         self.play(
             FadeOut(group_analyze),
             runtime=interval_time
         )
-        # speed up a bit here
-        self.wait(3*animation_time + 0*interval_time)
+        self.wait(interval_time)
         
         ## sync point 7 - analyze
         # 4 t1 + 4 t2
@@ -630,7 +902,7 @@ class CR_Visualize_text(Scene):
         self.play(
             Write(group_proof, run_time=animation_time),
         )
-        self.wait(2*interval_time)
+        self.wait(8*interval_time)
 
         self.play(
             FadeOut(group_proof, run_time=animation_time),
@@ -655,11 +927,80 @@ class CR_Visualize_text(Scene):
             ),
             run_time=animation_time
         )
-        self.wait(5*interval_time)
+        self.wait(4*interval_time)
+        self.play(
+            FadeOut(text_CR_2, run_time=interval_time),
+        )
 
-        ## sync point 8 - explanation
-        # 3 t1 + 10 t2
+        ## sync point 8 - explanation - 1
+        # 4 t1 + 16 t2
         debug_sync_dot(self)
+
+        # port
+        text_port = TexText("推广到任意 ")
+        text_z_1 = TexText("$z_1$", color=dx_color)
+        text_comma = TexText(" , ")
+        text_z_2 = TexText("$z_2$", color=dy_color)
+        group_port = VGroup(text_port, text_z_1, text_comma, text_z_2)
+        group_port.arrange(RIGHT)
+        group_port.to_corner(UP)
+
+        self.play(
+            Write(group_port, run_time=animation_time),
+        )
+        self.wait(3*interval_time)
+
+        self.play(
+            FadeOut(group_port, run_time=animation_time),
+        )
+        self.wait(interval_time)
+
+        ## sync point 9 - v1 and v2 drawn
+        # 2 t1 + 4 t2
+        debug_sync_dot(self)
+
+        self.wait(4*animation_time + 4*interval_time)
+
+        ## sync point 10 - analyze - 2
+        # 4 t1 + 4 t2
+        debug_sync_dot(self)
+
+        self.wait(1*animation_time + 8*interval_time)
+        
+        text_port_conclusion = TexText(
+            R'''
+            $$
+            \therefore
+            \begin{bmatrix}  
+              {\partial u \over \partial z_2} \\  
+              {\partial v \over \partial z_2}
+            \end{bmatrix}
+            =
+            \begin{bmatrix}  
+              \cos \theta & -\sin \theta \\
+              \sin \theta & \cos \theta
+            \end{bmatrix}
+            \begin{bmatrix}  
+              {\partial u \over \partial z_1} \\  
+              {\partial v \over \partial z_1}
+            \end{bmatrix}
+            $$
+            '''
+        )
+
+        text_port_conclusion.to_corner(UP)
+
+        self.play(
+            Write(text_port_conclusion, run_time=animation_time),
+        )
+        self.wait(8*interval_time)
+
+        self.play(
+            FadeOut(text_port_conclusion),
+            run_time=interval_time
+        )
+
+        self.wait(interval_time)
 
 #########################################################################################
 
@@ -690,31 +1031,37 @@ class CR_Visualize_startup(Scene):
 
 class CR_Visualize_ending(Scene):
     def construct(self):
-        notice = Text(
+        notice = TexText(
             """
-            作者: fxzjshm\n
-            视频画面部分： Copyright (C) 2021 fxzjshm\n
-            \n
-            此视频仅限 Bilibili 发布。\n
-            需获得具有作者 GPG 签名的授权文件方可转载，原因见下。\n
-            \n
-            敬告盗视频者：\n
-            未经授权，不得以任何形式通过任何途径将此视频的任何部分转载至任何其他平台，\n
-            包括但不限于 抖音、快手、火山小视频、西瓜视频、优酷、爱奇艺、好看视频、\n
-            搜狐视频、腾讯视频、腾讯微视、腾讯企鹅号、微信视频号、梨视频、百家号、CSDN 等；\n
-            对于任何侵权行为，作者保留追究法律责任的权利。\n
-            \n
-            ------
-            \n
-            此视频的源代码以 GNU 通用公共许可证第 3 版或其后续版本授权。\n
-            此视频使用 Grant Sanderson “3Blue1Brown” 开发的 manim 引擎，\n
-            制作中参考了 manim-kindergarten 团队编写的 manim 教程，在此表示非常感谢。\n
-            \n
+            \\begin{flushleft}
+            \\begin{small}
+            作者: fxzjshm ~\\\\
+            视频画面部分： Copyright (C) 2021 fxzjshm ~\\\\
+            ~\\\\
+            此视频仅限 Bilibili 发布。 ~\\\\
+            需获得具有作者 GPG 签名的授权文件方可转载，原因见下。 ~\\\\
+            ~\\\\
+            ------ ~\\\\
+            ~\\\\
+            敬告盗视频者（包括自动盗视频程序的操纵者）： ~\\\\
+            未经授权，不得以任何形式通过任何途径将此视频的任何部分转载至任何其他平台， ~\\\\
+            包括但不限于 抖音、快手、火山小视频、西瓜视频、优酷、爱奇艺、百家号、好看视频、 ~\\\\
+            搜狐视频、腾讯视频、腾讯微视、腾讯企鹅号、微信视频号、梨视频、CSDN 等； ~\\\\
+            对于任何侵权行为，作者保留追究法律责任的权利。 ~\\\\
+            ~\\\\
+            ------ ~\\\\
+            ~\\\\
+            此视频画面部分的源代码以 GNU 通用公共许可证第 3 版或其后续版本授权。 ~\\\\
+            此视频使用 Grant Sanderson “3Blue1Brown” 开发的 manim 引擎， ~\\\\
+            制作中参考了 manim-kindergarten 团队编写的 manim 教程，非常感谢。 ~\\\\
+            ~\\\\
             BGM: Foxtail-Grass Studio 歳月-雲流れ-
+            \\end{small}
+            \\end{flushleft}
             """,
-            font_size=16,
-            font="Noto Serif CJK SC",
-            stroke_width=0,
+            font_size=14,
+            #font="Noto Sans CJK SC",
+            #stroke_width=0,
             #t2c={'Blue':BLUE, 'Brown':GREY_BROWN},
         )
 
@@ -726,7 +1073,7 @@ class CR_Visualize_ending(Scene):
         )
         self.wait(5*interval_time)
         self.play(
-            #FadeOut(notice),
+            FadeOut(notice),
             run_time=0.5*animation_time
         )
         self.wait(2*interval_time)

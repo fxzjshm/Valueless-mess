@@ -43,7 +43,7 @@ base_point_x = 1.
 base_point_y = 2.
 dx = 0.2
 dy = 0.2
-theta_1 = 0.666
+theta_1 = 0.233
 theta_2 = 2.333
 
 dx_color = GREEN
@@ -226,7 +226,13 @@ class CR_Visualize_left_side(Scene):
         self.play(FadeOut(v_rotate), run_time=interval_time)
         self.wait(2*interval_time)
 
-        self.wait(3*animation_time + 7*interval_time)
+        self.wait(3*animation_time + 8*interval_time)
+
+        ## sync point 8 - explanation - 1
+        # 4 t1 + 16 t2
+        debug_sync_dot(self)
+
+        self.wait(5*animation_time + 13*interval_time)
 
         self.play(
             FadeOut(v_dx),
@@ -237,9 +243,9 @@ class CR_Visualize_left_side(Scene):
             FadeOut(v_dy_label),
             run_time=interval_time
         )
-
-        ## sync point 8 - explanation - 1
-        # 4 t1 + 16 t2
+        
+        ## sync point 8.1 - explanation - 2 - Jacobian matrix
+        # 5 t1 + 14 t2
         debug_sync_dot(self)
 
         # port to any two vectors
@@ -273,25 +279,27 @@ class CR_Visualize_left_side(Scene):
         # 2 t1 + 4 t2
         debug_sync_dot(self)
 
+        '''
         self.wait(4*animation_time + 4*interval_time)
 
         ## sync point 10 - analyze - 2
         # 4 t1 + 4 t2
         debug_sync_dot(self)
+        '''
 
         v_rotate = v_v1.copy().set_color(WHITE)
         rotate_angle = (v_v2.get_angle() - v_v1.get_angle())
 
-        self.wait(animation_time)
-        self.wait(2*interval_time)
-        self.play(FadeIn(v_rotate), run_time=interval_time)
-        self.play(Rotate(v_rotate, angle=rotate_angle, about_point=base_dot.get_center()), run_time=2*interval_time)
-        self.play(FadeOut(v_rotate), run_time=interval_time)
+        #self.wait(animation_time)
+        #self.wait(2*interval_time)
+        self.play(FadeIn(v_rotate), run_time=animation_time)
+        self.play(Rotate(v_rotate, angle=rotate_angle, about_point=base_dot.get_center()), run_time=2*animation_time)
+        self.play(FadeOut(v_rotate), run_time=animation_time)
         self.wait(2*interval_time)
 
         self.wait(1*animation_time + 8*interval_time)
 
-        ## sync point 11 - explanation - 2
+        ## sync point 11 - explanation - 3
         # 2 t1 + 16 t2
         debug_sync_dot(self)
 
@@ -549,7 +557,13 @@ class CR_Visualize_right_side(Scene):
         self.play(FadeOut(v_rotate), run_time=interval_time)
         self.wait(2*interval_time)
 
-        self.wait(3*animation_time + 7*interval_time)
+        self.wait(3*animation_time + 8*interval_time)
+
+        ## sync point 8 - explanation - 1
+        # 4 t1 + 16 t2
+        debug_sync_dot(self)
+
+        self.wait(5*animation_time + 13*interval_time)
 
         self.play(
             FadeOut(v_dx),
@@ -576,9 +590,9 @@ class CR_Visualize_right_side(Scene):
             FadeOut(v_v_dy_label),
             run_time=interval_time
         )
-
-        ## sync point 8 - explanation - 1
-        # 4 t1 + 16 t2
+        
+        ## sync point 8.1 - explanation - 2 - Jacobian matrix
+        # 5 t1 + 14 t2
         debug_sync_dot(self)
 
         # port to any two vectors
@@ -612,6 +626,7 @@ class CR_Visualize_right_side(Scene):
         # 2 t1 + 4 t2
         debug_sync_dot(self)
 
+        '''
         v_u_v1_point = [v1_point[0], base_point[1], 0.]
         v_u_v2_point = [v2_point[0], base_point[1], 0.]
         v_u_v1 = Arrow(start=base_point, end=v_u_v1_point, buff=0, stroke_color=u_v_dx_color, stroke_width = arrow_stroke_width, max_tip_length_to_length_ratio=arrow_max_tip_length_to_length_ratio)
@@ -677,21 +692,22 @@ class CR_Visualize_right_side(Scene):
         ## sync point 10 - analyze - 2
         # 4 t1 + 4 t2
         debug_sync_dot(self)
+        '''
 
         v_rotate = v_v1.copy().set_color(WHITE)
         rotate_angle = (v_v2.get_angle() - v_v1.get_angle()) + 2*PI
 
-        self.wait(animation_time)
-        self.wait(2*interval_time)
-        self.play(FadeIn(v_rotate), run_time=interval_time)
-        self.play(Rotate(v_rotate, angle=rotate_angle, about_point=base_dot.get_center()), run_time=2*interval_time)
-        self.play(FadeOut(v_rotate), run_time=interval_time)
+        #self.wait(animation_time)
+        #self.wait(2*interval_time)
+        self.play(FadeIn(v_rotate), run_time=animation_time)
+        self.play(Rotate(v_rotate, angle=rotate_angle, about_point=base_dot.get_center()), run_time=2*animation_time)
+        self.play(FadeOut(v_rotate), run_time=animation_time)
         self.wait(2*interval_time)
 
         self.wait(1*animation_time + 8*interval_time)
 
-        ## sync point 11 - explanation - 2
-        # 2 t1 + 16 t2
+        ## sync point 11 - explanation - 3
+        # 5 t1 + 10 t2
         debug_sync_dot(self)
 
         self.play(
@@ -700,21 +716,24 @@ class CR_Visualize_right_side(Scene):
             FadeOut(v_v1_label),
             FadeOut(v_v2_label),
 
-            FadeOut(v_u_v1),
-            FadeOut(v_u_v1_line),
-            FadeOut(v_u_v1_label),
+            
+            #FadeOut(v_u_v1),
+            #FadeOut(v_u_v1_line),
+            #FadeOut(v_u_v1_label),
 
-            FadeOut(v_u_v2),
-            FadeOut(v_u_v2_line),
-            FadeOut(v_u_v2_label),
+            #FadeOut(v_u_v2),
+            #FadeOut(v_u_v2_line),
+            #FadeOut(v_u_v2_label),
 
-            FadeOut(v_v_v1),
-            FadeOut(v_v_v1_line),
-            FadeOut(v_v_v1_label),
+            #FadeOut(v_v_v1),
+            #FadeOut(v_v_v1_line),
+            #FadeOut(v_v_v1_label),
 
-            FadeOut(v_v_v2),
-            FadeOut(v_v_v2_line),
-            FadeOut(v_v_v2_label),
+            #FadeOut(v_v_v2),
+            #FadeOut(v_v_v2_line),
+            #FadeOut(v_v_v2_label),
+            
+
             run_time=interval_time
         )
 
@@ -927,16 +946,83 @@ class CR_Visualize_text(Scene):
             ),
             run_time=animation_time
         )
-        self.wait(4*interval_time)
+        self.wait(3*interval_time)
         self.play(
             FadeOut(text_CR_2, run_time=interval_time),
         )
+        self.wait(interval_time)
 
         ## sync point 8 - explanation - 1
         # 4 t1 + 16 t2
         debug_sync_dot(self)
 
-        # port
+        # v0.0.3: add Jacobian matrix
+        text_jacobi_1 = Text("或可以考虑切空间之间的线性变换，即考虑 Jacobian 矩阵")
+        text_jacobi_matrix_1 = Tex(
+            R'''
+            
+            J = 
+            \begin{bmatrix}  
+              {\partial u \over \partial x} & {\partial u \over \partial y} \\  
+              {\partial v \over \partial x} & {\partial v \over \partial y}
+            \end{bmatrix}
+            
+            '''
+        )
+        text_jacobi_matrix_2 = Tex(
+            R'''
+            
+            = k
+            \begin{bmatrix}  
+              \cos \theta & -\sin \theta \\
+              \sin \theta & \cos \theta
+            \end{bmatrix}
+            
+            '''
+        )
+        text_jacobi_2 = Text("由于导数必须能写成复数，即伸缩与旋转，故有")
+        text_jacobi_2.to_corner(UP)
+        text_jacobi_3 = Tex(R"\Rightarrow {\partial u \over \partial x} = {\partial v \over \partial y}, ~ {\partial u \over \partial y} = - {\partial v \over \partial x}")
+        group_jacobi_matrix = VGroup(text_jacobi_matrix_1, text_jacobi_matrix_2, text_jacobi_3).arrange(RIGHT)
+        group_jacobi = VGroup(text_jacobi_1, group_jacobi_matrix)
+        group_jacobi.arrange(DOWN).to_corner(UP)
+        
+        self.play(
+            Write(text_jacobi_1),
+            run_time=animation_time
+        )
+        self.play(
+            Write(text_jacobi_matrix_1),
+            run_time=animation_time
+        )
+        self.wait(2*interval_time)
+        self.play(
+            Transform(text_jacobi_1, text_jacobi_2),
+            run_time=animation_time
+        )
+        self.wait(interval_time)
+        self.play(
+            Write(text_jacobi_matrix_2),
+            run_time=animation_time
+        )
+        self.wait(3*interval_time)
+        self.play(
+            Write(text_jacobi_3),
+            run_time=animation_time
+        )
+        self.wait(6*interval_time)
+        self.play(
+            FadeOut(group_jacobi_matrix),
+            FadeOut(text_jacobi_1),
+            #FadeOut(text_jacobi_2),
+            run_time=interval_time
+        )
+        self.wait(2*interval_time)
+        ## sync point 8.1 - explanation - 2 - Jacobian matrix
+        # 5 t1 + 14 t2
+        debug_sync_dot(self)
+
+        # v0.0.2: add port
         text_port = TexText("推广到任意 ")
         text_z_1 = TexText("$z_1$", color=dx_color)
         text_comma = TexText(" , ")
@@ -959,18 +1045,21 @@ class CR_Visualize_text(Scene):
         # 2 t1 + 4 t2
         debug_sync_dot(self)
 
+        '''
         self.wait(4*animation_time + 4*interval_time)
 
         ## sync point 10 - analyze - 2
         # 4 t1 + 4 t2
         debug_sync_dot(self)
+        '''
 
-        self.wait(1*animation_time + 8*interval_time)
+        #self.wait(1*animation_time + 2*interval_time)
+        self.wait(4*animation_time + 2*interval_time)
         
-        text_port_conclusion = TexText(
+        text_port_conclusion_1 = Text("由保角性可以得到 ")
+        text_port_conclusion_2 = TexText(
             R'''
             $$
-            \therefore
             \begin{bmatrix}  
               {\partial u \over \partial z_2} \\  
               {\partial v \over \partial z_2}
@@ -987,16 +1076,20 @@ class CR_Visualize_text(Scene):
             $$
             '''
         )
-
-        text_port_conclusion.to_corner(UP)
+        group_port_conclusion = VGroup(text_port_conclusion_1, text_port_conclusion_2).arrange(RIGHT)
+        group_port_conclusion.to_corner(UP)
 
         self.play(
-            Write(text_port_conclusion, run_time=animation_time),
+            Write(group_port_conclusion, run_time=animation_time),
         )
         self.wait(8*interval_time)
 
+        ## sync point 11 - explanation - 3
+        # 2 t1 + 16 t2
+        debug_sync_dot(self)
+
         self.play(
-            FadeOut(text_port_conclusion),
+            FadeOut(group_port_conclusion),
             run_time=interval_time
         )
 
@@ -1019,15 +1112,15 @@ class CR_Visualize_startup(Scene):
         )
         self.wait(interval_time)
         self.play(
-            Write(info, run_time=animation_time),
+            Write(info, run_time=0.5*animation_time),
         )
-        self.wait(6*interval_time)
+        self.wait(2*interval_time)
         self.play(
             FadeOut(title),
             FadeOut(info),
             run_time=animation_time
         )
-        self.wait(2*interval_time)
+        self.wait(interval_time)
 
 class CR_Visualize_ending(Scene):
     def construct(self):
@@ -1055,11 +1148,11 @@ class CR_Visualize_ending(Scene):
             此视频使用 Grant Sanderson “3Blue1Brown” 开发的 manim 引擎， ~\\\\
             制作中参考了 manim-kindergarten 团队编写的 manim 教程，非常感谢。 ~\\\\
             ~\\\\
-            BGM: Foxtail-Grass Studio 歳月-雲流れ-
+            BGM: Foxtail-Grass Studio 雲流れ
             \\end{small}
             \\end{flushleft}
             """,
-            font_size=14,
+            font_size=18,
             #font="Noto Sans CJK SC",
             #stroke_width=0,
             #t2c={'Blue':BLUE, 'Brown':GREY_BROWN},
@@ -1071,12 +1164,12 @@ class CR_Visualize_ending(Scene):
         self.play(
             FadeIn(notice, run_time=0.5*animation_time),
         )
-        self.wait(5*interval_time)
+        self.wait(2*interval_time)
         self.play(
             FadeOut(notice),
             run_time=0.5*animation_time
         )
-        self.wait(2*interval_time)
+        #self.wait(2*interval_time)
 
 #########################################################################################
 
